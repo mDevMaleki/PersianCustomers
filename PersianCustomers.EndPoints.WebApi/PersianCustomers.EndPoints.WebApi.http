@@ -1,0 +1,6 @@
+@PersianCustomers.EndPoints.WebApi_HostAddress = http://localhost:5194
+
+GET {{PersianCustomers.EndPoints.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
