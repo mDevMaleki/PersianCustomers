@@ -192,6 +192,23 @@ export class ClientsComponent implements OnInit {
     });
   }
 
+  getRecordingUrl(recordingFile?: string | null) {
+    if (!recordingFile) {
+      return '';
+    }
+
+    if (recordingFile.startsWith('http')) {
+      return recordingFile;
+    }
+
+    if (recordingFile.startsWith('/api/')) {
+      return recordingFile;
+    }
+
+    const normalized = recordingFile.includes('%') ? recordingFile : encodeURIComponent(recordingFile);
+    return `/api/Recordings/stream/${normalized}`;
+  }
+
   private addDays(date: Date, amount: number) {
     const updated = new Date(date);
     updated.setDate(updated.getDate() + amount);
