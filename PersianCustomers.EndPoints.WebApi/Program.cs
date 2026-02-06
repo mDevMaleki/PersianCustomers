@@ -12,6 +12,7 @@ using PersianCustomers.Infra.Persistence.Extensions;
 using PersianCustomers.EndPoints.WebApi.Middlewares;
 using PersianCustomers.Infra.Persistence.Seeds;
 using PersianCustomers.EndPoints.WebApi.Options;
+using PersianCustomers.EndPoints.WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,8 @@ builder.Services.AddIdentityServices(builder.Configuration);
 // Add new enhanced services
 builder.Services.AddEnhancedServices(builder.Configuration);
 builder.Services.Configure<AsteriskRecordingOptions>(builder.Configuration.GetSection("AsteriskRecording"));
+builder.Services.Configure<AsteriskRecordingSyncOptions>(builder.Configuration.GetSection("AsteriskRecording:Sync"));
+builder.Services.AddHostedService<AsteriskRecordingSyncService>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
