@@ -1,93 +1,0 @@
-<div class="dashboard">
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-badge">PC</div>
-      پنل مدیریت مشتریان
-    </div>
-
-    <div class="nav-section">
-      <div class="nav-title">داشبورد</div>
-      <a class="nav-link active" href="#">
-        نمای کلی
-        <span class="badge">جدید</span>
-      </a>
-      <a class="nav-link" href="#">پروفایل مشتریان</a>
-      <a class="nav-link" href="#">درخواست های اخیر</a>
-      <a class="nav-link" href="#">گزارش مالی</a>
-    </div>
-
-    <div class="nav-section">
-      <div class="nav-title">تنظیمات</div>
-      <a class="nav-link" href="#">دسترسی کاربران</a>
-      <a class="nav-link" href="#">اتصال سیستم ها</a>
-    </div>
-
-    <div class="footer-note">نسخه نمایشی • آخرین بروزرسانی ۱۴۰۳/۰۶/۳۰</div>
-  </aside>
-
-  <main class="main">
-    <header class="header">
-      <div>
-        <h1>سلام سارا! 👋</h1>
-        <p class="footer-note">در اینجا یک نمای کلی از سلامت ارتباط با مشتریان دارید.</p>
-      </div>
-      <div class="header-actions">
-        <button class="button ghost">فیلتر گزارش</button>
-        <button class="button primary">ایجاد گزارش</button>
-      </div>
-    </header>
-
-    <section class="stats">
-      <div class="card" *ngFor="let stat of stats">
-        <h3>{{ stat.title }}</h3>
-        <strong>{{ stat.value }}</strong>
-        <div class="trend" [style.color]="stat.color">{{ stat.trend }}</div>
-      </div>
-    </section>
-
-    <section class="grid">
-      <div class="panel">
-        <div class="panel-header">
-          <strong>فعالیت های اخیر</strong>
-          <span class="footer-note">آخرین ۲۴ ساعت</span>
-        </div>
-        <div class="activity">
-          <div class="activity-item" *ngFor="let activity of activities">
-            <div>
-              <div>{{ activity.title }}</div>
-              <span>{{ activity.time }}</span>
-            </div>
-            <span [style.color]="activity.color">{{ activity.status }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-header">
-          <strong>کیفیت تعامل با مشتریان</strong>
-          <span class="footer-note">آپدیت زنده</span>
-        </div>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>کانال</th>
-              <th>رضایت</th>
-              <th>وضعیت</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let channel of channels">
-              <td>{{ channel.name }}</td>
-              <td>{{ channel.score }}</td>
-              <td>
-                <span class="status" [ngClass]="channel.statusClass">
-                  {{ channel.status }}
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </main>
-</div>
