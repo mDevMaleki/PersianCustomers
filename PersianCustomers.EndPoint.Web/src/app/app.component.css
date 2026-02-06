@@ -1,0 +1,70 @@
+.app-shell {
+  min-height: 100vh;
+  background: #f4f6fb;
+  color: #1f1f1f;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 2rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.brand {
+  display: grid;
+  gap: 0.2rem;
+  font-weight: 700;
+}
+
+.brand small {
+  font-weight: 400;
+  color: #6b7280;
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+}
+
+nav a {
+  text-decoration: none;
+  color: #1f1f1f;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+nav a.active {
+  background: #3455ff;
+  color: #fff;
+}
+
+.app-content {
+  padding: 2rem;
+  display: grid;
+  gap: 2rem;
+}
+
+.card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.muted {
+  color: #6b7280;
+}
+
+.outline {
+  background: transparent;
+  color: #3455ff;
+  border: 1px solid #3455ff;
+}
+
+.error {
+  color: #c52828;
+}

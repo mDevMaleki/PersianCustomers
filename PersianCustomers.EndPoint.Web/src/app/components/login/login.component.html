@@ -1,0 +1,22 @@
+<section class="card">
+  <h2>ورود</h2>
+  <p class="muted">برای مشاهده مشتری‌ها و تماس‌ها وارد شوید.</p>
+
+  <form (ngSubmit)="submit()" #loginForm="ngForm">
+    <label>
+      ایمیل
+      <input type="email" name="email" required [(ngModel)]="model.email" />
+    </label>
+
+    <label>
+      رمز عبور
+      <input type="password" name="password" required [(ngModel)]="model.password" />
+    </label>
+
+    <button type="submit" [disabled]="loginForm.invalid || isLoading">
+      {{ isLoading ? 'در حال ورود...' : 'ورود' }}
+    </button>
+  </form>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+</section>

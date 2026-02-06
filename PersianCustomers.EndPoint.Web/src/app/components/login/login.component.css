@@ -1,0 +1,36 @@
+form {
+  display: grid;
+  gap: 1rem;
+}
+
+label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+input {
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+}
+
+button {
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: #3455ff;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #b5b5b5;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #c52828;
+  margin-top: 0.8rem;
+}

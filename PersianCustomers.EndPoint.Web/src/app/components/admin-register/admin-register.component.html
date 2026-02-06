@@ -1,0 +1,66 @@
+<section class="card">
+  <h2>افزودن کاربر توسط ادمین</h2>
+  <p class="muted">فرم ایجاد حساب کاربری جدید (بر اساس API ثبت‌نام).</p>
+
+  <form (ngSubmit)="submit()" #registerForm="ngForm">
+    <div class="grid">
+      <label>
+        نام
+        <input type="text" name="firstName" required [(ngModel)]="model.firstName" />
+      </label>
+
+      <label>
+        نام خانوادگی
+        <input type="text" name="lastName" required [(ngModel)]="model.lastName" />
+      </label>
+
+      <label>
+        ایمیل
+        <input type="email" name="email" required [(ngModel)]="model.email" />
+      </label>
+
+      <label>
+        تلفن
+        <input type="tel" name="phoneNumber" [(ngModel)]="model.phoneNumber" />
+      </label>
+
+      <label>
+        رمز عبور
+        <input type="password" name="password" required minlength="6" [(ngModel)]="model.password" />
+      </label>
+
+      <label>
+        تکرار رمز عبور
+        <input
+          type="password"
+          name="confirmPassword"
+          required
+          minlength="6"
+          [(ngModel)]="model.confirmPassword"
+        />
+      </label>
+
+      <label>
+        کد ملی
+        <input type="text" name="nationalCode" [(ngModel)]="model.nationalCode" />
+      </label>
+
+      <label>
+        تاریخ تولد
+        <input type="date" name="birthDate" [(ngModel)]="model.birthDate" />
+      </label>
+
+      <label class="full">
+        آدرس
+        <textarea name="address" rows="3" [(ngModel)]="model.address"></textarea>
+      </label>
+    </div>
+
+    <button type="submit" [disabled]="registerForm.invalid || isLoading">
+      {{ isLoading ? 'در حال ایجاد...' : 'ایجاد کاربر' }}
+    </button>
+  </form>
+
+  <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+</section>
