@@ -1,0 +1,110 @@
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.clients-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.client-card {
+  border: 1px solid #e2e2e2;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #fff;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.client-card.active {
+  border-color: #3455ff;
+  box-shadow: 0 0 0 2px rgba(52, 85, 255, 0.2);
+}
+
+.client-card dl {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.client-card dt {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #6b6b6b;
+}
+
+.client-card dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+.actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.actions button {
+  border-radius: 8px;
+  border: none;
+  padding: 0.5rem 0.7rem;
+  background: #3455ff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.actions .outline {
+  background: transparent;
+  color: #3455ff;
+  border: 1px solid #3455ff;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin: 1rem 0;
+}
+
+.filters label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.filters input {
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+}
+
+.filters button {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: #3455ff;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.calls table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.calls th,
+.calls td {
+  border-bottom: 1px solid #e2e2e2;
+  padding: 0.6rem;
+  text-align: right;
+  font-size: 0.9rem;
+}
+
+.calls th {
+  background: #f7f7f7;
+}

@@ -1,0 +1,103 @@
+<section class="card">
+  <header class="section-header">
+    <div>
+      <h2>لیست مشتری‌ها</h2>
+      <p class="muted">نمایش مشتری‌ها همراه با اطلاعات تماس و انتخاب برای مشاهده تماس‌ها.</p>
+    </div>
+    <button class="outline" (click)="loadClients()" [disabled]="isLoadingClients">
+      {{ isLoadingClients ? 'در حال دریافت...' : 'به‌روزرسانی' }}
+    </button>
+  </header>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <div class="clients-grid" *ngIf="clients.length">
+    <article
+      class="client-card"
+      *ngFor="let client of clients"
+      [class.active]="client === selectedClient"
+    >
+      <h3>{{ client.firstName }} {{ client.lastName }}</h3>
+      <p class="muted">{{ client.title || 'بدون عنوان' }}</p>
+      <dl>
+        <div>
+          <dt>شماره موبایل ۱</dt>
+          <dd>{{ client.mobileNumber1 || '---' }}</dd>
+        </div>
+        <div>
+          <dt>شماره موبایل ۲</dt>
+          <dd>{{ client.mobileNumber2 || '---' }}</dd>
+        </div>
+        <div>
+          <dt>تلفن ثابت</dt>
+          <dd>{{ client.phoneNumber || '---' }}</dd>
+        </div>
+        <div>
+          <dt>ایمیل</dt>
+          <dd>{{ client.email || '---' }}</dd>
+        </div>
+      </dl>
+      <div class="actions">
+        <button (click)="selectClient(client, client.mobileNumber1)">تماس‌های موبایل ۱</button>
+        <button class="outline" (click)="selectClient(client, client.mobileNumber2)">تماس‌های موبایل ۲</button>
+        <button class="outline" (click)="selectClient(client, client.phoneNumber)">تماس‌های تلفن ثابت</button>
+      </div>
+    </article>
+  </div>
+
+  <p class="muted" *ngIf="!clients.length && !isLoadingClients">مشتری‌ای برای نمایش وجود ندارد.</p>
+</section>
+
+<section class="card" *ngIf="selectedClient">
+  <header class="section-header">
+    <div>
+      <h2>تماس‌های مشتری</h2>
+      <p class="muted">
+        {{ selectedClient.firstName }} {{ selectedClient.lastName }} - شماره انتخابی: {{ selectedPhone || '---' }}
+      </p>
+    </div>
+  </header>
+
+  <div class="filters">
+    <label>
+      از تاریخ
+      <input type="date" [(ngModel)]="startDate" />
+    </label>
+    <label>
+      تا تاریخ
+      <input type="date" [(ngModel)]="endDate" />
+    </label>
+    <button (click)="loadCallRecords()" [disabled]="isLoadingCalls">
+      {{ isLoadingCalls ? 'در حال دریافت...' : 'نمایش تماس‌ها' }}
+    </button>
+  </div>
+
+  <p class="error" *ngIf="callsErrorMessage">{{ callsErrorMessage }}</p>
+
+  <div class="calls" *ngIf="callRecords.length">
+    <table>
+      <thead>
+        <tr>
+          <th>تاریخ تماس</th>
+          <th>تماس‌گیرنده</th>
+          <th>شماره مقصد</th>
+          <th>مدت زمان</th>
+          <th>وضعیت</th>
+          <th>فایل ضبط</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let call of callRecords">
+          <td>{{ call.callDate | date: 'yyyy/MM/dd HH:mm' }}</td>
+          <td>{{ call.src }}</td>
+          <td>{{ call.dst }}</td>
+          <td>{{ call.duration }} ثانیه</td>
+          <td>{{ call.disposition }}</td>
+          <td>{{ call.recordingFile || '---' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="muted" *ngIf="!callRecords.length && !isLoadingCalls">تماسی برای این بازه زمانی ثبت نشده است.</p>
+</section>
