@@ -1,3 +1,95 @@
+<section class="card form-card">
+  <header class="section-header">
+    <div>
+      <h2>مدیریت مشتری‌ها</h2>
+      <p class="muted">افزودن مشتری جدید یا ویرایش اطلاعات مشتری‌های ثبت شده.</p>
+    </div>
+    <button class="outline" type="button" (click)="startCreateClient()" [disabled]="isSubmitting">
+      افزودن مشتری جدید
+    </button>
+  </header>
+
+  <p class="error" *ngIf="formErrorMessage">{{ formErrorMessage }}</p>
+  <p class="success" *ngIf="formSuccessMessage">{{ formSuccessMessage }}</p>
+
+  <form class="client-form" (ngSubmit)="submitClient()">
+    <div class="form-grid">
+      <label>
+        نام
+        <input type="text" name="firstName" [(ngModel)]="formData.firstName" />
+      </label>
+      <label>
+        نام خانوادگی
+        <input type="text" name="lastName" [(ngModel)]="formData.lastName" />
+      </label>
+      <label>
+        عنوان
+        <input type="text" name="title" [(ngModel)]="formData.title" required />
+      </label>
+      <label>
+        موبایل ۱
+        <input type="text" name="mobileNumber1" [(ngModel)]="formData.mobileNumber1" required />
+      </label>
+      <label>
+        موبایل ۲
+        <input type="text" name="mobileNumber2" [(ngModel)]="formData.mobileNumber2" />
+      </label>
+      <label>
+        تلفن ثابت
+        <input type="text" name="phoneNumber" [(ngModel)]="formData.phoneNumber" />
+      </label>
+      <label>
+        ایمیل
+        <input type="email" name="email" [(ngModel)]="formData.email" />
+      </label>
+      <label>
+        تاریخ تولد
+        <input type="date" name="birthDay" [(ngModel)]="formData.birthDay" />
+      </label>
+      <label>
+        نوع خدمات
+        <select name="dentalService" [(ngModel)]="formData.dentalService">
+          <option *ngFor="let service of dentalServiceOptions" [ngValue]="service.value">
+            {{ service.label }}
+          </option>
+        </select>
+      </label>
+      <label class="full">
+        آدرس
+        <input type="text" name="address" [(ngModel)]="formData.address" />
+      </label>
+      <label>
+        استان
+        <input type="text" name="province" [(ngModel)]="formData.province" />
+      </label>
+      <label>
+        شهر
+        <input type="text" name="city" [(ngModel)]="formData.city" />
+      </label>
+      <label>
+        کد پستی
+        <input type="text" name="postalCode" [(ngModel)]="formData.postalCode" />
+      </label>
+      <label>
+        کشور
+        <input type="text" name="country" [(ngModel)]="formData.country" />
+      </label>
+      <label class="full">
+        توضیحات
+        <textarea name="description" rows="3" [(ngModel)]="formData.description"></textarea>
+      </label>
+    </div>
+    <div class="form-actions">
+      <button type="submit" [disabled]="isSubmitting">
+        {{ isEditMode ? 'ذخیره تغییرات' : 'ثبت مشتری' }}
+      </button>
+      <button type="button" class="outline" (click)="startCreateClient()" [disabled]="isSubmitting">
+        پاک کردن فرم
+      </button>
+    </div>
+  </form>
+</section>
+
 <section class="card">
   <header class="section-header">
     <div>
@@ -41,6 +133,10 @@
         <button (click)="selectClient(client, client.mobileNumber1)">تماس‌های موبایل ۱</button>
         <button class="outline" (click)="selectClient(client, client.mobileNumber2)">تماس‌های موبایل ۲</button>
         <button class="outline" (click)="selectClient(client, client.phoneNumber)">تماس‌های تلفن ثابت</button>
+      </div>
+      <div class="management-actions">
+        <button class="outline" (click)="startEditClient(client)">ویرایش</button>
+        <button class="danger" (click)="deleteClient(client)">حذف</button>
       </div>
     </article>
   </div>

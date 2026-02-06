@@ -44,4 +44,16 @@ export class ApiService {
 
     return this.http.get<BaseResponse<PaginatedResult<CallRecordDto>>>(`${this.baseUrl}/Voip`, { params });
   }
+
+  createClient(request: ClientDto) {
+    return this.http.post<BaseResponse<number>>(`${this.baseUrl}/Client`, request);
+  }
+
+  updateClient(request: ClientDto) {
+    return this.http.put<BaseResponse<boolean>>(`${this.baseUrl}/Client`, request);
+  }
+
+  deleteClient(id: number) {
+    return this.http.delete<BaseResponse<boolean>>(`${this.baseUrl}/Client/${id}`);
+  }
 }

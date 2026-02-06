@@ -9,6 +9,7 @@ namespace PersianCustomers.Core.Application.Features.Client.DTOs
 {
     public class ClientDto
     {
+        public long Id { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string Title { get; set; } = "";
