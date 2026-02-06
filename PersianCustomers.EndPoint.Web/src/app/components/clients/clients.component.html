@@ -189,7 +189,20 @@
           <td>{{ call.dst }}</td>
           <td>{{ call.duration }} ثانیه</td>
           <td>{{ call.disposition }}</td>
-          <td>{{ call.recordingFile || '---' }}</td>
+          <td>
+            <ng-container *ngIf="call.recordingFile; else noRecording">
+              <audio controls [src]="getRecordingUrl(call.recordingFile)"></audio>
+              <a
+                class="recording-link"
+                [href]="getRecordingUrl(call.recordingFile)"
+                target="_blank"
+                rel="noopener"
+              >
+                پخش در تب جدید
+              </a>
+            </ng-container>
+            <ng-template #noRecording>---</ng-template>
+          </td>
         </tr>
       </tbody>
     </table>

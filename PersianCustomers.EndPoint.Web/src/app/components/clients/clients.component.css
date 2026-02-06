@@ -194,3 +194,17 @@
 .calls th {
   background: #f7f7f7;
 }
+
+.calls audio {
+  width: 160px;
+  max-width: 100%;
+  display: block;
+}
+
+.recording-link {
+  display: inline-block;
+  margin-top: 0.4rem;
+  color: #3455ff;
+  font-size: 0.8rem;
+  text-decoration: none;
+}
