@@ -10,8 +10,14 @@ namespace PersianCustomers.Infra.Persistence.Extensions;
 
 public static class InfraExtensions
 {
+
+  
+
     public static IServiceCollection AddDatabaseServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddDbContext<AsteriskDbContext>(options =>
+           options.UseMySQL(configuration.GetConnectionString("AsteriskDb")));
+
         services.AddDbContext<ApplicationDbContext>(options =>
         {
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
@@ -33,6 +39,9 @@ public static class InfraExtensions
         
         // Repository registration
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositoryAdvanced<>));
+        services.AddScoped<ICallRecordRepository, CallRecordRepository>();
+
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
        
     
@@ -53,19 +62,7 @@ public static class InfraExtensions
             options.CompactionPercentage = 0.25; // Compact 25% when limit reached
         });
 
-        // Distributed Cache (Redis)
-        // var redisConnectionString = configuration.GetConnectionString("Redis");
-        // if (!string.IsNullOrEmpty(redisConnectionString))
-        // {
-        //     services.AddStackExchangeRedisCache(options =>
-        //     {
-        //         options.Configuration = redisConnectionString;
-        //         options.InstanceName = "SajedClub";
-        //     });
-        // }
-        // else
-        // {
-            // Fallback to in-memory distributed cache for development
+       
             services.AddDistributedMemoryCache();
         // }
 

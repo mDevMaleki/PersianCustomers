@@ -25,3 +25,4 @@ namespace PersianCustomers.Core.Application.Features.Client.DTOs
         public string? PostalCode { get; set; }
         public string? Country { get; set; }
     }
+}
