@@ -29,7 +29,17 @@ namespace PersianCustomers.Core.Application.Features.Client.Handlers
         {
             try
             {
-                var callRecorsQuery = await _callRecordRepository.GetCallsAsync(request.startDate,request.endDate,request.phoneNumber);
+                var normalizedPhoneNumber = request.phoneNumber?.Trim();
+                if (!string.IsNullOrWhiteSpace(normalizedPhoneNumber) && normalizedPhoneNumber.StartsWith("0", StringComparison.Ordinal))
+                {
+                    normalizedPhoneNumber = normalizedPhoneNumber.TrimStart('0');
+                }
+
+                var phoneNumberToSearch = string.IsNullOrWhiteSpace(normalizedPhoneNumber)
+                    ? request.phoneNumber
+                    : normalizedPhoneNumber;
+
+                var callRecorsQuery = await _callRecordRepository.GetCallsAsync(request.startDate, request.endDate, phoneNumberToSearch);
 
 
                 var totalCount = await callRecorsQuery.CountAsync(cancellationToken);
