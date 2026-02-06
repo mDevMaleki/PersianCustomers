@@ -16,10 +16,22 @@ export class ClientsComponent implements OnInit {
   selectedPhone = '';
   errorMessage = '';
   callsErrorMessage = '';
+  formErrorMessage = '';
+  formSuccessMessage = '';
   isLoadingClients = false;
   isLoadingCalls = false;
+  isSubmitting = false;
+  isEditMode = false;
   startDate = this.formatDate(this.addDays(new Date(), -7));
   endDate = this.formatDate(new Date());
+  formData: ClientDto = this.getEmptyForm();
+  dentalServiceOptions = [
+    { value: 0, label: 'ایمپلنت' },
+    { value: 1, label: 'زیبایی' },
+    { value: 2, label: 'درمان' },
+    { value: 3, label: 'لمینت' },
+    { value: 4, label: 'ترمیمی' }
+  ];
 
   constructor(private api: ApiService) {}
 
@@ -56,6 +68,88 @@ export class ClientsComponent implements OnInit {
     this.callsErrorMessage = '';
   }
 
+  startCreateClient() {
+    this.isEditMode = false;
+    this.formData = this.getEmptyForm();
+    this.formErrorMessage = '';
+    this.formSuccessMessage = '';
+  }
+
+  startEditClient(client: ClientDto) {
+    this.isEditMode = true;
+    this.formData = { ...client };
+    this.formErrorMessage = '';
+    this.formSuccessMessage = '';
+  }
+
+  submitClient() {
+    this.formErrorMessage = '';
+    this.formSuccessMessage = '';
+    this.isSubmitting = true;
+
+    const request = { ...this.formData };
+
+    const action$ = this.isEditMode ? this.api.updateClient(request) : this.api.createClient(request);
+
+    action$.subscribe({
+      next: (response) => {
+        if (response.isSuccess) {
+          this.formSuccessMessage = this.isEditMode
+            ? 'اطلاعات مشتری با موفقیت ویرایش شد.'
+            : 'مشتری با موفقیت ثبت شد.';
+          this.isEditMode = false;
+          this.formData = this.getEmptyForm();
+          this.loadClients();
+        } else {
+          this.formErrorMessage = response.message || 'ثبت اطلاعات مشتری ناموفق بود.';
+        }
+        this.isSubmitting = false;
+      },
+      error: (err) => {
+        this.formErrorMessage = err?.error?.message || 'خطا در ارتباط با سرور.';
+        this.isSubmitting = false;
+      }
+    });
+  }
+
+  deleteClient(client: ClientDto) {
+    if (!client.id) {
+      this.formErrorMessage = 'شناسه مشتری برای حذف پیدا نشد.';
+      return;
+    }
+
+    const confirmed = window.confirm(`آیا از حذف مشتری ${client.firstName || ''} ${client.lastName || ''} اطمینان دارید؟`);
+    if (!confirmed) {
+      return;
+    }
+
+    this.formErrorMessage = '';
+    this.formSuccessMessage = '';
+    this.isSubmitting = true;
+
+    this.api.deleteClient(client.id).subscribe({
+      next: (response) => {
+        if (response.isSuccess) {
+          this.formSuccessMessage = 'مشتری با موفقیت حذف شد.';
+          if (this.selectedClient?.id === client.id) {
+            this.selectedClient = null;
+            this.selectedPhone = '';
+            this.callRecords = [];
+            this.callRecordsResult = null;
+          }
+          this.loadClients();
+        } else {
+          this.formErrorMessage = response.message || 'حذف مشتری ناموفق بود.';
+        }
+        this.isSubmitting = false;
+      },
+      error: (err) => {
+        this.formErrorMessage = err?.error?.message || 'خطا در ارتباط با سرور.';
+        this.isSubmitting = false;
+      }
+    });
+  }
+
   loadCallRecords(pageNumber = 1) {
     if (!this.selectedPhone) {
       this.callsErrorMessage = 'شماره تماس برای جستجو انتخاب نشده است.';
@@ -90,5 +184,13 @@ export class ClientsComponent implements OnInit {
 
   private formatDate(date: Date) {
     return date.toISOString().split('T')[0];
+  }
+
+  private getEmptyForm(): ClientDto {
+    return {
+      title: '',
+      dentalService: 0,
+      mobileNumber1: ''
+    };
   }
 }

@@ -32,6 +32,7 @@ export interface PaginatedResult<T> {
 }
 
 export interface ClientDto {
+  id?: number;
   firstName?: string;
   lastName?: string;
   title: string;

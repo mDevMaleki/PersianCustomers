@@ -54,6 +54,22 @@ namespace PersianCustomers.EndPoints.WebApi.Controllers
             return Ok(result);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteClient(long id)
+        {
+            var command = new DeleteClientCommand(id);
+            var result = await _mediator.Send(command);
+
+            if (!result.IsSuccess)
+            {
+                if (result.Message.Contains("not found"))
+                    return NotFound(result);
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
 
     }
 }
