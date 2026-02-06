@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
-import { CallRecordDto, ClientDto, PaginatedResult } from '../../models/api.models';
+import { BaseResponse, CallRecordDto, ClientDto, PaginatedResult } from '../../models/api.models';
 
 @Component({
   selector: 'app-clients',
@@ -89,15 +89,31 @@ export class ClientsComponent implements OnInit {
 
     const request = { ...this.formData };
 
-    const action$ = this.isEditMode ? this.api.updateClient(request) : this.api.createClient(request);
+    if (this.isEditMode) {
+      this.api.updateClient(request).subscribe({
+        next: (response: BaseResponse<boolean>) => {
+          if (response.isSuccess) {
+            this.formSuccessMessage = 'اطلاعات مشتری با موفقیت ویرایش شد.';
+            this.isEditMode = false;
+            this.formData = this.getEmptyForm();
+            this.loadClients();
+          } else {
+            this.formErrorMessage = response.message || 'ثبت اطلاعات مشتری ناموفق بود.';
+          }
+          this.isSubmitting = false;
+        },
+        error: (err: unknown) => {
+          this.formErrorMessage = (err as { error?: { message?: string } })?.error?.message || 'خطا در ارتباط با سرور.';
+          this.isSubmitting = false;
+        }
+      });
+      return;
+    }
 
-    action$.subscribe({
-      next: (response) => {
+    this.api.createClient(request).subscribe({
+      next: (response: BaseResponse<number>) => {
         if (response.isSuccess) {
-          this.formSuccessMessage = this.isEditMode
-            ? 'اطلاعات مشتری با موفقیت ویرایش شد.'
-            : 'مشتری با موفقیت ثبت شد.';
-          this.isEditMode = false;
+          this.formSuccessMessage = 'مشتری با موفقیت ثبت شد.';
           this.formData = this.getEmptyForm();
           this.loadClients();
         } else {
@@ -105,8 +121,8 @@ export class ClientsComponent implements OnInit {
         }
         this.isSubmitting = false;
       },
-      error: (err) => {
-        this.formErrorMessage = err?.error?.message || 'خطا در ارتباط با سرور.';
+      error: (err: unknown) => {
+        this.formErrorMessage = (err as { error?: { message?: string } })?.error?.message || 'خطا در ارتباط با سرور.';
         this.isSubmitting = false;
       }
     });
