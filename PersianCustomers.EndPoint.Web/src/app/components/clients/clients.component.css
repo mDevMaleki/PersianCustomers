@@ -512,6 +512,36 @@
   font-family: inherit;
 }
 
+.treatment-summary input {
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  font-family: inherit;
+}
+
+.treatment-checks {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.treatment-checks h5 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.check-grid {
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.check-grid label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
 .summary-row {
   display: flex;
   justify-content: space-between;

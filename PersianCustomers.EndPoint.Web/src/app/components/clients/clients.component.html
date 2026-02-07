@@ -501,6 +501,16 @@
               <strong>{{ formatPrice(treatmentTotal) }} تومان</strong>
             </div>
             <label>
+              پیش پرداخت
+              <input
+                type="number"
+                min="0"
+                [(ngModel)]="treatmentPrepaymentAmount"
+                (ngModelChange)="persistTreatmentPlan()"
+                placeholder="مبلغ پیش پرداخت (تومان)"
+              />
+            </label>
+            <label>
               طرح اقساطی
               <select
                 [ngModel]="selectedInstallmentMonths"
@@ -514,6 +524,47 @@
             <div class="summary-row">
               <span>مبلغ هر قسط</span>
               <strong>{{ formatPrice(installmentMonthlyPayment) }} تومان</strong>
+            </div>
+            <div class="treatment-checks">
+              <h5>اطلاعات چک</h5>
+              <div class="check-grid">
+                <label>
+                  تاریخ چک
+                  <input
+                    type="date"
+                    [(ngModel)]="treatmentChequeDate"
+                    (ngModelChange)="persistTreatmentPlan()"
+                  />
+                </label>
+                <label>
+                  مبلغ چک
+                  <input
+                    type="number"
+                    min="0"
+                    [(ngModel)]="treatmentChequeAmount"
+                    (ngModelChange)="persistTreatmentPlan()"
+                    placeholder="مبلغ چک (تومان)"
+                  />
+                </label>
+                <label>
+                  شماره چک
+                  <input
+                    type="text"
+                    [(ngModel)]="treatmentChequeNumber"
+                    (ngModelChange)="persistTreatmentPlan()"
+                    placeholder="شماره چک"
+                  />
+                </label>
+                <label>
+                  صاحب چک
+                  <input
+                    type="text"
+                    [(ngModel)]="treatmentChequeOwner"
+                    (ngModelChange)="persistTreatmentPlan()"
+                    placeholder="نام صاحب چک"
+                  />
+                </label>
+              </div>
             </div>
           </div>
 

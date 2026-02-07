@@ -35,6 +35,11 @@ export class ClientsComponent implements OnInit {
   treatmentLowerTeeth: ToothPosition[] = this.createTeethRow('lower', 140);
   selectedTeethIds: string[] = [];
   treatmentPlanNote = '';
+  treatmentPrepaymentAmount = 0;
+  treatmentChequeDate = '';
+  treatmentChequeAmount = 0;
+  treatmentChequeNumber = '';
+  treatmentChequeOwner = '';
   treatmentToothServices: Record<string, TreatmentToothService> = {};
   installmentPlanOptions: InstallmentPlanOption[] = [
     { months: 2, label: '۲ ماهه' },
@@ -540,6 +545,11 @@ export class ClientsComponent implements OnInit {
   private resetModalTreatment() {
     this.selectedTeethIds = [];
     this.treatmentPlanNote = '';
+    this.treatmentPrepaymentAmount = 0;
+    this.treatmentChequeDate = '';
+    this.treatmentChequeAmount = 0;
+    this.treatmentChequeNumber = '';
+    this.treatmentChequeOwner = '';
     this.treatmentToothServices = {};
     this.selectedInstallmentMonths = 6;
   }
@@ -594,6 +604,11 @@ export class ClientsComponent implements OnInit {
         const parsed = JSON.parse(stored) as TreatmentPlanStorage;
         this.selectedTeethIds = parsed.selectedTeethIds ?? [];
         this.treatmentPlanNote = parsed.note ?? '';
+        this.treatmentPrepaymentAmount = parsed.prepaymentAmount ?? 0;
+        this.treatmentChequeDate = parsed.chequeDate ?? '';
+        this.treatmentChequeAmount = parsed.chequeAmount ?? 0;
+        this.treatmentChequeNumber = parsed.chequeNumber ?? '';
+        this.treatmentChequeOwner = parsed.chequeOwner ?? '';
         this.treatmentToothServices = parsed.toothServices ?? {};
         this.selectedInstallmentMonths = parsed.installmentMonths ?? 6;
         this.cleanupTreatmentServices();
@@ -610,6 +625,11 @@ export class ClientsComponent implements OnInit {
     const payload: TreatmentPlanStorage = {
       selectedTeethIds: this.selectedTeethIds,
       note: this.treatmentPlanNote,
+      prepaymentAmount: this.treatmentPrepaymentAmount,
+      chequeDate: this.treatmentChequeDate,
+      chequeAmount: this.treatmentChequeAmount,
+      chequeNumber: this.treatmentChequeNumber,
+      chequeOwner: this.treatmentChequeOwner,
       toothServices: this.treatmentToothServices,
       installmentMonths: this.selectedInstallmentMonths
     };
@@ -788,6 +808,11 @@ interface ToothPosition {
 interface TreatmentPlanStorage {
   selectedTeethIds: string[];
   note: string;
+  prepaymentAmount: number;
+  chequeDate: string;
+  chequeAmount: number;
+  chequeNumber: string;
+  chequeOwner: string;
   toothServices: Record<string, TreatmentToothService>;
   installmentMonths: number;
 }
