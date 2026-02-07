@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { BaseResponse, CallRecordDto, ClientDto, PaginatedResult } from '../../models/api.models';
+import {
+  formatJalaliDateTime,
+  normalizeJalaliInput,
+  toGregorianDateString,
+  toJalaliDateString
+} from '../../utils/jalali-date';
 
 type ToothArch = 'upper' | 'lower';
 
@@ -179,8 +185,8 @@ export class ClientsComponent implements OnInit {
   appointmentErrorMessage = '';
   appointmentSuccessMessage = '';
 
-  startDate = this.formatDate(this.addDays(new Date(), -7));
-  endDate = this.formatDate(new Date());
+  startDate = toJalaliDateString(this.addDays(new Date(), -7));
+  endDate = toJalaliDateString(new Date());
 
   formData: ClientDto = this.getEmptyForm();
 
@@ -261,7 +267,10 @@ export class ClientsComponent implements OnInit {
 
   startEditClient(client: ClientDto) {
     this.isEditMode = true;
-    this.formData = { ...client };
+    this.formData = {
+      ...client,
+      birthDay: client.birthDay ? toJalaliDateString(client.birthDay) : ''
+    };
     this.formErrorMessage = '';
     this.formSuccessMessage = '';
     this.resetModalCalls();
@@ -288,7 +297,11 @@ export class ClientsComponent implements OnInit {
     this.formSuccessMessage = '';
     this.isSubmitting = true;
 
-    const request = { ...this.formData };
+    const normalizedBirthDay = this.formData.birthDay ? toGregorianDateString(this.formData.birthDay) : '';
+    const request = {
+      ...this.formData,
+      birthDay: normalizedBirthDay || undefined
+    };
 
     if (this.isEditMode) {
       this.api.updateClient(request).subscribe({
@@ -378,7 +391,9 @@ export class ClientsComponent implements OnInit {
     this.isLoadingCalls = true;
     this.callsErrorMessage = '';
 
-    this.api.getCallRecords(this.startDate, this.endDate, this.selectedPhone, pageNumber).subscribe({
+    const startDate = toGregorianDateString(this.startDate);
+    const endDate = toGregorianDateString(this.endDate);
+    this.api.getCallRecords(startDate, endDate, this.selectedPhone, pageNumber).subscribe({
       next: (response) => {
         if (response.isSuccess && response.data) {
           this.callRecordsResult = response.data;
@@ -419,7 +434,9 @@ export class ClientsComponent implements OnInit {
     this.modalIsLoadingCalls = true;
     this.modalCallsErrorMessage = '';
 
-    this.api.getCallRecords(this.startDate, this.endDate, this.modalSelectedPhone, pageNumber).subscribe({
+    const startDate = toGregorianDateString(this.startDate);
+    const endDate = toGregorianDateString(this.endDate);
+    this.api.getCallRecords(startDate, endDate, this.modalSelectedPhone, pageNumber).subscribe({
       next: (response) => {
         if (response.isSuccess && response.data) {
           this.modalCallRecordsResult = response.data;
@@ -631,6 +648,14 @@ export class ClientsComponent implements OnInit {
     return new Intl.NumberFormat('fa-IR').format(value);
   }
 
+  formatCallDate(value: string) {
+    return formatJalaliDateTime(value) || value;
+  }
+
+  normalizeDateInput(value?: string | null) {
+    return normalizeJalaliInput(value);
+  }
+
   formatPrice(value: number) {
     return new Intl.NumberFormat('fa-IR').format(value ?? 0);
   }
@@ -718,10 +743,6 @@ export class ClientsComponent implements OnInit {
     return updated;
   }
 
-  private formatDate(date: Date) {
-    return date.toISOString().split('T')[0];
-  }
-
   private resetModalCalls() {
     this.modalActiveTab = 'details';
     this.modalCallRecords = [];
@@ -766,7 +787,11 @@ export class ClientsComponent implements OnInit {
 
     try {
       const stored = localStorage.getItem(this.getTaskStorageKey(clientId));
-      this.modalTasks = stored ? (JSON.parse(stored) as ClientTask[]) : [];
+      const parsed = stored ? (JSON.parse(stored) as ClientTask[]) : [];
+      this.modalTasks = parsed.map((task) => ({
+        ...task,
+        date: this.normalizeStoredDate(task.date)
+      }));
     } catch {
       this.modalTasks = [];
     }
@@ -785,7 +810,11 @@ export class ClientsComponent implements OnInit {
 
     try {
       const stored = localStorage.getItem(this.getAppointmentStorageKey(clientId));
-      this.modalAppointments = stored ? (JSON.parse(stored) as ClientAppointment[]) : [];
+      const parsed = stored ? (JSON.parse(stored) as ClientAppointment[]) : [];
+      this.modalAppointments = parsed.map((appointment) => ({
+        ...appointment,
+        date: this.normalizeStoredDate(appointment.date)
+      }));
     } catch {
       this.modalAppointments = [];
     }
@@ -812,12 +841,15 @@ export class ClientsComponent implements OnInit {
         this.treatmentPrepaymentAmount = parsed.prepaymentAmount ?? 0;
 
         if (parsed.cheques?.length) {
-          this.treatmentCheques = parsed.cheques;
+          this.treatmentCheques = parsed.cheques.map((cheque) => ({
+            ...cheque,
+            date: this.normalizeStoredDate(cheque.date)
+          }));
         } else if (parsed.chequeDate || parsed.chequeNumber || parsed.chequeOwner || parsed.chequeAmount) {
           this.treatmentCheques = [
             {
               id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
-              date: parsed.chequeDate ?? '',
+              date: this.normalizeStoredDate(parsed.chequeDate ?? ''),
               amount: parsed.chequeAmount ?? 0,
               number: parsed.chequeNumber ?? '',
               owner: parsed.chequeOwner ?? ''
@@ -855,8 +887,8 @@ export class ClientsComponent implements OnInit {
 
   private sortModalTasks() {
     this.modalTasks = [...this.modalTasks].sort((a, b) => {
-      const dateA = new Date(`${a.date}T${a.time || '00:00'}`).getTime();
-      const dateB = new Date(`${b.date}T${b.time || '00:00'}`).getTime();
+      const dateA = this.getGregorianTimestamp(a.date, a.time);
+      const dateB = this.getGregorianTimestamp(b.date, b.time);
       return dateA - dateB;
     });
   }
@@ -867,8 +899,8 @@ export class ClientsComponent implements OnInit {
 
   private sortModalAppointments() {
     this.modalAppointments = [...this.modalAppointments].sort((a, b) => {
-      const dateA = new Date(`${a.date}T${a.time || '00:00'}`).getTime();
-      const dateB = new Date(`${b.date}T${b.time || '00:00'}`).getTime();
+      const dateA = this.getGregorianTimestamp(a.date, a.time);
+      const dateB = this.getGregorianTimestamp(b.date, b.time);
       return dateA - dateB;
     });
   }
@@ -922,8 +954,30 @@ export class ClientsComponent implements OnInit {
     return {
       title: '',
       dentalService: 0,
-      mobileNumber1: ''
+      mobileNumber1: '',
+      birthDay: ''
     };
+  }
+
+  private normalizeStoredDate(value: string) {
+    const normalized = normalizeJalaliInput(value);
+    if (normalized !== value) {
+      return normalized;
+    }
+    if (value && value.includes('-')) {
+      const converted = toJalaliDateString(value);
+      return converted || value;
+    }
+    return normalized;
+  }
+
+  private getGregorianTimestamp(date: string, time?: string) {
+    const gregorianDate = toGregorianDateString(date);
+    if (!gregorianDate) {
+      return 0;
+    }
+    const timestamp = new Date(`${gregorianDate}T${time || '00:00'}`).getTime();
+    return Number.isNaN(timestamp) ? 0 : timestamp;
   }
 
   private createTeethRow(arch: ToothArch, y: number): ToothPosition[] {

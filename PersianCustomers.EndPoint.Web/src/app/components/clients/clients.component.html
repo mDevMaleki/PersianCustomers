@@ -87,7 +87,13 @@
           </label>
           <label>
             تاریخ تولد
-            <input type="date" name="birthDay" [(ngModel)]="formData.birthDay" />
+            <input
+              type="text"
+              name="birthDay"
+              placeholder="مثال: 1403/01/01"
+              [(ngModel)]="formData.birthDay"
+              (blur)="formData.birthDay = normalizeDateInput(formData.birthDay)"
+            />
           </label>
           <label>
             نوع خدمات
@@ -158,11 +164,21 @@
       <div class="filters">
         <label>
           از تاریخ
-          <input type="date" [(ngModel)]="startDate" />
+          <input
+            type="text"
+            placeholder="مثال: 1403/01/01"
+            [(ngModel)]="startDate"
+            (blur)="startDate = normalizeDateInput(startDate)"
+          />
         </label>
         <label>
           تا تاریخ
-          <input type="date" [(ngModel)]="endDate" />
+          <input
+            type="text"
+            placeholder="مثال: 1403/01/01"
+            [(ngModel)]="endDate"
+            (blur)="endDate = normalizeDateInput(endDate)"
+          />
         </label>
         <button type="button" (click)="loadModalCallRecords()" [disabled]="modalIsLoadingCalls">
           {{ modalIsLoadingCalls ? 'در حال دریافت...' : 'نمایش تماس‌ها' }}
@@ -185,7 +201,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let call of modalCallRecords">
-              <td>{{ call.callDate | date: 'yyyy/MM/dd HH:mm' }}</td>
+              <td>{{ formatCallDate(call.callDate) }}</td>
               <td>{{ call.src }}</td>
               <td>{{ call.dst }}</td>
               <td>{{ call.duration }} ثانیه</td>
@@ -223,7 +239,13 @@
       <div class="task-form">
         <label>
           تاریخ
-          <input type="date" name="taskDate" [(ngModel)]="taskForm.date" />
+          <input
+            type="text"
+            name="taskDate"
+            placeholder="مثال: 1403/01/01"
+            [(ngModel)]="taskForm.date"
+            (blur)="taskForm.date = normalizeDateInput(taskForm.date)"
+          />
         </label>
         <label>
           ساعت
@@ -299,7 +321,13 @@
       <div class="appointment-form">
         <label>
           تاریخ
-          <input type="date" name="appointmentDate" [(ngModel)]="appointmentForm.date" />
+          <input
+            type="text"
+            name="appointmentDate"
+            placeholder="مثال: 1403/01/01"
+            [(ngModel)]="appointmentForm.date"
+            (blur)="appointmentForm.date = normalizeDateInput(appointmentForm.date)"
+          />
         </label>
         <label>
           ساعت
@@ -513,8 +541,12 @@
               <div class="check-grid check-form">
                 <label>
                   تاریخ چک
-                  <input type="date"
-                         [(ngModel)]="newChequeDate" />
+                  <input
+                    type="text"
+                    placeholder="مثال: 1403/01/01"
+                    [(ngModel)]="newChequeDate"
+                    (blur)="newChequeDate = normalizeDateInput(newChequeDate)"
+                  />
                 </label>
                 <label>
                   مبلغ چک
@@ -665,14 +697,24 @@
   </header>
 
   <div class="filters">
-    <label>
-      از تاریخ
-      <input type="date" [(ngModel)]="startDate" />
-    </label>
-    <label>
-      تا تاریخ
-      <input type="date" [(ngModel)]="endDate" />
-    </label>
+      <label>
+        از تاریخ
+        <input
+          type="text"
+          placeholder="مثال: 1403/01/01"
+          [(ngModel)]="startDate"
+          (blur)="startDate = normalizeDateInput(startDate)"
+        />
+      </label>
+      <label>
+        تا تاریخ
+        <input
+          type="text"
+          placeholder="مثال: 1403/01/01"
+          [(ngModel)]="endDate"
+          (blur)="endDate = normalizeDateInput(endDate)"
+        />
+      </label>
     <button (click)="loadCallRecords()" [disabled]="isLoadingCalls">
       {{ isLoadingCalls ? 'در حال دریافت...' : 'نمایش تماس‌ها' }}
     </button>
@@ -694,7 +736,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let call of callRecords">
-          <td>{{ call.callDate | date: 'yyyy/MM/dd HH:mm' }}</td>
+          <td>{{ formatCallDate(call.callDate) }}</td>
           <td>{{ call.src }}</td>
           <td>{{ call.dst }}</td>
           <td>{{ call.duration }} ثانیه</td>

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { RegisterRequest } from '../../models/api.models';
+import { normalizeJalaliInput, toGregorianDateString } from '../../utils/jalali-date';
 
 @Component({
   selector: 'app-admin-register',
@@ -11,6 +12,7 @@ export class AdminRegisterComponent {
   isLoading = false;
   successMessage = '';
   errorMessage = '';
+  birthDateInput = '';
   model: RegisterRequest = {
     firstName: '',
     lastName: '',
@@ -26,7 +28,13 @@ export class AdminRegisterComponent {
     this.errorMessage = '';
     this.isLoading = true;
 
-    this.api.register(this.model).subscribe({
+    const normalizedBirthDate = this.birthDateInput ? toGregorianDateString(this.birthDateInput) : '';
+    const payload: RegisterRequest = {
+      ...this.model,
+      birthDate: normalizedBirthDate || undefined
+    };
+
+    this.api.register(payload).subscribe({
       next: (response) => {
         if (response.isSuccess && response.data) {
           this.successMessage = 'کاربر با موفقیت ایجاد شد.';
@@ -37,6 +45,7 @@ export class AdminRegisterComponent {
             password: '',
             confirmPassword: ''
           };
+          this.birthDateInput = '';
         } else {
           this.errorMessage = response.message || 'ثبت کاربر ناموفق بود.';
         }
@@ -47,5 +56,9 @@ export class AdminRegisterComponent {
         this.isLoading = false;
       }
     });
+  }
+
+  normalizeBirthDateInput() {
+    this.birthDateInput = normalizeJalaliInput(this.birthDateInput);
   }
 }
