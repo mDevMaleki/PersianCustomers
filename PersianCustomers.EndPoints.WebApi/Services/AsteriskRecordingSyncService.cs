@@ -61,7 +61,10 @@ public class AsteriskRecordingSyncService : BackgroundService
         var tempFile = Path.GetTempFileName();
         await File.WriteAllTextAsync(tempFile, "#!/usr/bin/env bash\n" +
                                             $"printf '%s\\n' '{EscapePassword(password)}'\n", stoppingToken);
-        File.SetUnixFileMode(tempFile, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+        if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+        {
+            File.SetUnixFileMode(tempFile, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+        }
 
         try
         {
