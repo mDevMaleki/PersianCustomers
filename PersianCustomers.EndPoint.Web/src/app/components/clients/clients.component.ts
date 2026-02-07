@@ -23,6 +23,12 @@ export class ClientsComponent implements OnInit {
   isSubmitting = false;
   isEditMode = false;
   isFormModalOpen = false;
+  modalActiveTab: 'details' | 'calls' = 'details';
+  modalCallRecords: CallRecordDto[] = [];
+  modalCallRecordsResult: PaginatedResult<CallRecordDto> | null = null;
+  modalSelectedPhone = '';
+  modalCallsErrorMessage = '';
+  modalIsLoadingCalls = false;
   startDate = this.formatDate(this.addDays(new Date(), -7));
   endDate = this.formatDate(new Date());
   formData: ClientDto = this.getEmptyForm();
@@ -74,6 +80,7 @@ export class ClientsComponent implements OnInit {
     this.formData = this.getEmptyForm();
     this.formErrorMessage = '';
     this.formSuccessMessage = '';
+    this.resetModalCalls();
     this.isFormModalOpen = true;
   }
 
@@ -82,6 +89,7 @@ export class ClientsComponent implements OnInit {
     this.formData = { ...client };
     this.formErrorMessage = '';
     this.formSuccessMessage = '';
+    this.resetModalCalls();
     this.isFormModalOpen = true;
   }
 
@@ -91,6 +99,7 @@ export class ClientsComponent implements OnInit {
     }
     this.isFormModalOpen = false;
     this.formErrorMessage = '';
+    this.resetModalCalls();
   }
 
   submitClient() {
@@ -205,6 +214,47 @@ export class ClientsComponent implements OnInit {
     });
   }
 
+  setModalTab(tab: 'details' | 'calls') {
+    this.modalActiveTab = tab;
+    if (tab === 'calls') {
+      this.prepareModalCalls();
+    }
+  }
+
+  selectModalPhone(phoneNumber?: string | null) {
+    if (!phoneNumber) {
+      return;
+    }
+    this.modalSelectedPhone = phoneNumber;
+    this.loadModalCallRecords();
+  }
+
+  loadModalCallRecords(pageNumber = 1) {
+    if (!this.modalSelectedPhone) {
+      this.modalCallsErrorMessage = 'شماره موبایل برای نمایش تماس انتخاب نشده است.';
+      return;
+    }
+
+    this.modalIsLoadingCalls = true;
+    this.modalCallsErrorMessage = '';
+
+    this.api.getCallRecords(this.startDate, this.endDate, this.modalSelectedPhone, pageNumber).subscribe({
+      next: (response) => {
+        if (response.isSuccess && response.data) {
+          this.modalCallRecordsResult = response.data;
+          this.modalCallRecords = response.data.items;
+        } else {
+          this.modalCallsErrorMessage = response.message || 'دریافت لیست تماس‌ها ناموفق بود.';
+        }
+        this.modalIsLoadingCalls = false;
+      },
+      error: (err) => {
+        this.modalCallsErrorMessage = err?.error?.message || 'خطا در دریافت تماس‌ها.';
+        this.modalIsLoadingCalls = false;
+      }
+    });
+  }
+
   getRecordingUrl(recordingFile?: string | null) {
     if (!recordingFile) {
       return '';
@@ -226,6 +276,26 @@ export class ClientsComponent implements OnInit {
 
   private formatDate(date: Date) {
     return date.toISOString().split('T')[0];
+  }
+
+  private resetModalCalls() {
+    this.modalActiveTab = 'details';
+    this.modalCallRecords = [];
+    this.modalCallRecordsResult = null;
+    this.modalSelectedPhone = '';
+    this.modalCallsErrorMessage = '';
+    this.modalIsLoadingCalls = false;
+  }
+
+  private prepareModalCalls() {
+    const defaultPhone = this.formData.mobileNumber1 || this.formData.mobileNumber2 || '';
+    this.modalSelectedPhone = defaultPhone;
+    this.modalCallRecords = [];
+    this.modalCallRecordsResult = null;
+    this.modalCallsErrorMessage = '';
+    if (this.modalSelectedPhone) {
+      this.loadModalCallRecords();
+    }
   }
 
   private getEmptyForm(): ClientDto {

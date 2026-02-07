@@ -37,6 +37,37 @@
   align-items: center;
 }
 
+.modal-tabs {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.modal-tabs button {
+  border: 1px solid #cbd5f5;
+  background: transparent;
+  color: #3455ff;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-tabs button.active {
+  background: #3455ff;
+  color: #fff;
+}
+
+.modal-calls-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 1rem;
+}
+
 .close-button {
   border: 1px solid #cbd5f5;
   background: transparent;

@@ -24,84 +24,188 @@
       </button>
     </header>
 
+    <div class="modal-tabs">
+      <button
+        type="button"
+        [class.active]="modalActiveTab === 'details'"
+        (click)="setModalTab('details')"
+      >
+        اطلاعات
+      </button>
+      <button
+        type="button"
+        [class.active]="modalActiveTab === 'calls'"
+        (click)="setModalTab('calls')"
+      >
+        تماس‌ها
+      </button>
+    </div>
+
     <p class="error" *ngIf="formErrorMessage">{{ formErrorMessage }}</p>
 
-    <form class="client-form" (ngSubmit)="submitClient()">
-      <div class="form-grid">
-        <label>
-          نام
-          <input type="text" name="firstName" [(ngModel)]="formData.firstName" />
-        </label>
-        <label>
-          نام خانوادگی
-          <input type="text" name="lastName" [(ngModel)]="formData.lastName" />
-        </label>
-        <label>
-          عنوان
-          <input type="text" name="title" [(ngModel)]="formData.title" required />
-        </label>
-        <label>
-          موبایل ۱
-          <input type="text" name="mobileNumber1" [(ngModel)]="formData.mobileNumber1" required />
-        </label>
-        <label>
-          موبایل ۲
-          <input type="text" name="mobileNumber2" [(ngModel)]="formData.mobileNumber2" />
-        </label>
-        <label>
-          تلفن ثابت
-          <input type="text" name="phoneNumber" [(ngModel)]="formData.phoneNumber" />
-        </label>
-        <label>
-          ایمیل
-          <input type="email" name="email" [(ngModel)]="formData.email" />
-        </label>
-        <label>
-          تاریخ تولد
-          <input type="date" name="birthDay" [(ngModel)]="formData.birthDay" />
-        </label>
-        <label>
-          نوع خدمات
-          <select name="dentalService" [(ngModel)]="formData.dentalService">
-            <option *ngFor="let service of dentalServiceOptions" [ngValue]="service.value">
-              {{ service.label }}
-            </option>
-          </select>
-        </label>
-        <label class="full">
-          آدرس
-          <input type="text" name="address" [(ngModel)]="formData.address" />
-        </label>
-        <label>
-          استان
-          <input type="text" name="province" [(ngModel)]="formData.province" />
-        </label>
-        <label>
-          شهر
-          <input type="text" name="city" [(ngModel)]="formData.city" />
-        </label>
-        <label>
-          کد پستی
-          <input type="text" name="postalCode" [(ngModel)]="formData.postalCode" />
-        </label>
-        <label>
-          کشور
-          <input type="text" name="country" [(ngModel)]="formData.country" />
-        </label>
-        <label class="full">
-          توضیحات
-          <textarea name="description" rows="3" [(ngModel)]="formData.description"></textarea>
-        </label>
+    <ng-container *ngIf="modalActiveTab === 'details'">
+      <form class="client-form" (ngSubmit)="submitClient()">
+        <div class="form-grid">
+          <label>
+            نام
+            <input type="text" name="firstName" [(ngModel)]="formData.firstName" />
+          </label>
+          <label>
+            نام خانوادگی
+            <input type="text" name="lastName" [(ngModel)]="formData.lastName" />
+          </label>
+          <label>
+            عنوان
+            <input type="text" name="title" [(ngModel)]="formData.title" required />
+          </label>
+          <label>
+            موبایل ۱
+            <input type="text" name="mobileNumber1" [(ngModel)]="formData.mobileNumber1" required />
+          </label>
+          <label>
+            موبایل ۲
+            <input type="text" name="mobileNumber2" [(ngModel)]="formData.mobileNumber2" />
+          </label>
+          <label>
+            تلفن ثابت
+            <input type="text" name="phoneNumber" [(ngModel)]="formData.phoneNumber" />
+          </label>
+          <label>
+            ایمیل
+            <input type="email" name="email" [(ngModel)]="formData.email" />
+          </label>
+          <label>
+            تاریخ تولد
+            <input type="date" name="birthDay" [(ngModel)]="formData.birthDay" />
+          </label>
+          <label>
+            نوع خدمات
+            <select name="dentalService" [(ngModel)]="formData.dentalService">
+              <option *ngFor="let service of dentalServiceOptions" [ngValue]="service.value">
+                {{ service.label }}
+              </option>
+            </select>
+          </label>
+          <label class="full">
+            آدرس
+            <input type="text" name="address" [(ngModel)]="formData.address" />
+          </label>
+          <label>
+            استان
+            <input type="text" name="province" [(ngModel)]="formData.province" />
+          </label>
+          <label>
+            شهر
+            <input type="text" name="city" [(ngModel)]="formData.city" />
+          </label>
+          <label>
+            کد پستی
+            <input type="text" name="postalCode" [(ngModel)]="formData.postalCode" />
+          </label>
+          <label>
+            کشور
+            <input type="text" name="country" [(ngModel)]="formData.country" />
+          </label>
+          <label class="full">
+            توضیحات
+            <textarea name="description" rows="3" [(ngModel)]="formData.description"></textarea>
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" [disabled]="isSubmitting">
+            {{ isEditMode ? 'ذخیره تغییرات' : 'ثبت مشتری' }}
+          </button>
+          <button type="button" class="outline" (click)="startCreateClient()" [disabled]="isSubmitting">
+            پاک کردن فرم
+          </button>
+        </div>
+      </form>
+    </ng-container>
+
+    <ng-container *ngIf="modalActiveTab === 'calls'">
+      <div class="modal-calls-header">
+        <div>
+          <p class="muted">تماس‌های مرتبط با موبایل مشتری را بررسی کنید.</p>
+          <p class="muted">شماره انتخابی: {{ modalSelectedPhone || '---' }}</p>
+        </div>
+        <div class="table-actions">
+          <button
+            type="button"
+            class="outline"
+            (click)="selectModalPhone(formData.mobileNumber1)"
+            [disabled]="!formData.mobileNumber1"
+          >
+            موبایل ۱
+          </button>
+          <button
+            type="button"
+            class="outline"
+            (click)="selectModalPhone(formData.mobileNumber2)"
+            [disabled]="!formData.mobileNumber2"
+          >
+            موبایل ۲
+          </button>
+        </div>
       </div>
-      <div class="form-actions">
-        <button type="submit" [disabled]="isSubmitting">
-          {{ isEditMode ? 'ذخیره تغییرات' : 'ثبت مشتری' }}
-        </button>
-        <button type="button" class="outline" (click)="startCreateClient()" [disabled]="isSubmitting">
-          پاک کردن فرم
+
+      <div class="filters">
+        <label>
+          از تاریخ
+          <input type="date" [(ngModel)]="startDate" />
+        </label>
+        <label>
+          تا تاریخ
+          <input type="date" [(ngModel)]="endDate" />
+        </label>
+        <button type="button" (click)="loadModalCallRecords()" [disabled]="modalIsLoadingCalls">
+          {{ modalIsLoadingCalls ? 'در حال دریافت...' : 'نمایش تماس‌ها' }}
         </button>
       </div>
-    </form>
+
+      <p class="error" *ngIf="modalCallsErrorMessage">{{ modalCallsErrorMessage }}</p>
+
+      <div class="calls" *ngIf="modalCallRecords.length">
+        <table>
+          <thead>
+            <tr>
+              <th>تاریخ تماس</th>
+              <th>تماس‌گیرنده</th>
+              <th>شماره مقصد</th>
+              <th>مدت زمان</th>
+              <th>وضعیت</th>
+              <th>فایل ضبط</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let call of modalCallRecords">
+              <td>{{ call.callDate | date: 'yyyy/MM/dd HH:mm' }}</td>
+              <td>{{ call.src }}</td>
+              <td>{{ call.dst }}</td>
+              <td>{{ call.duration }} ثانیه</td>
+              <td>{{ call.disposition }}</td>
+              <td>
+                <ng-container *ngIf="call.recordingFile; else modalNoRecording">
+                  <audio controls [src]="getRecordingUrl(call.recordingFile)"></audio>
+                  <a
+                    class="recording-link"
+                    [href]="getRecordingUrl(call.recordingFile)"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    پخش در تب جدید
+                  </a>
+                </ng-container>
+                <ng-template #modalNoRecording>---</ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="muted" *ngIf="!modalCallRecords.length && !modalIsLoadingCalls">
+        تماسی برای نمایش وجود ندارد.
+      </p>
+    </ng-container>
   </div>
 </div>
 
