@@ -155,7 +155,7 @@ public class AsteriskRecordingSyncService : BackgroundService
             return null;
         }
 
-        var extensions = new List<string>(StringComparer.OrdinalIgnoreCase) { string.Empty };
+        var extensions = new List<string> { string.Empty };
         if (OperatingSystem.IsWindows())
         {
             var pathext = Environment.GetEnvironmentVariable("PATHEXT");
