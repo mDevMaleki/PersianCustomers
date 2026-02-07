@@ -76,6 +76,14 @@
   margin-top: 1rem;
 }
 
+.appointments-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
 .close-button {
   border: 1px solid #cbd5f5;
   background: transparent;
@@ -139,6 +147,31 @@
 }
 
 .task-form .full {
+  grid-column: 1 / -1;
+}
+
+.appointment-form {
+  margin-top: 1rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.appointment-form label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.appointment-form input,
+.appointment-form textarea {
+  padding: 0.6rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  font-family: inherit;
+}
+
+.appointment-form .full {
   grid-column: 1 / -1;
 }
 
@@ -296,6 +329,30 @@
   background: #f7f7f7;
 }
 
+.appointments-table {
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+
+.appointments-table table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.appointments-table th,
+.appointments-table td {
+  border-bottom: 1px solid #e2e2e2;
+  padding: 0.6rem;
+  text-align: right;
+  font-size: 0.9rem;
+  vertical-align: top;
+}
+
+.appointments-table th {
+  background: #f7f7f7;
+}
+
 .status-pill {
   display: inline-flex;
   padding: 0.2rem 0.6rem;
@@ -309,6 +366,11 @@
 .status-pill.done {
   background: rgba(31, 143, 75, 0.15);
   color: #1f8f4b;
+}
+
+.status-pill.canceled {
+  background: rgba(239, 68, 68, 0.16);
+  color: #b91c1c;
 }
 
 .calls audio {

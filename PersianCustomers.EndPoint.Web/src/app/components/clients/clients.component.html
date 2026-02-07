@@ -46,6 +46,13 @@
       >
         پیگیری‌ها
       </button>
+      <button
+        type="button"
+        [class.active]="modalActiveTab === 'appointments'"
+        (click)="setModalTab('appointments')"
+      >
+        نوبت‌ها
+      </button>
     </div>
 
     <p class="error" *ngIf="formErrorMessage">{{ formErrorMessage }}</p>
@@ -288,6 +295,104 @@
       </div>
 
       <p class="muted" *ngIf="!modalTasks.length">پیگیری ثبت نشده است.</p>
+    </ng-container>
+
+    <ng-container *ngIf="modalActiveTab === 'appointments'">
+      <div class="appointments-header">
+        <div>
+          <p class="muted">برای هر مشتری نوبت ثبت کنید تا برنامه‌ریزی مراجعه مشخص باشد.</p>
+          <p class="muted" *ngIf="!formData.id">برای ثبت نوبت ابتدا باید مشتری ذخیره شود.</p>
+        </div>
+      </div>
+
+      <div class="appointment-form">
+        <label>
+          تاریخ
+          <input type="date" name="appointmentDate" [(ngModel)]="appointmentForm.date" />
+        </label>
+        <label>
+          ساعت
+          <input type="time" name="appointmentTime" [(ngModel)]="appointmentForm.time" />
+        </label>
+        <label class="full">
+          نوع نوبت
+          <input type="text" name="appointmentService" [(ngModel)]="appointmentForm.service" />
+        </label>
+        <label class="full">
+          توضیحات
+          <textarea name="appointmentNotes" rows="3" [(ngModel)]="appointmentForm.notes"></textarea>
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" (click)="addAppointment()" [disabled]="!canAddAppointment()">
+          ثبت نوبت
+        </button>
+        <button type="button" class="outline" (click)="resetAppointmentForm()">
+          پاک کردن
+        </button>
+      </div>
+
+      <p class="error" *ngIf="appointmentErrorMessage">{{ appointmentErrorMessage }}</p>
+      <p class="success" *ngIf="appointmentSuccessMessage">{{ appointmentSuccessMessage }}</p>
+
+      <div class="appointments-table" *ngIf="modalAppointments.length">
+        <table>
+          <thead>
+            <tr>
+              <th>تاریخ و ساعت</th>
+              <th>نوع نوبت</th>
+              <th>توضیحات</th>
+              <th>وضعیت</th>
+              <th>مدیریت</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let appointment of modalAppointments">
+              <td>{{ appointment.date }} - {{ appointment.time }}</td>
+              <td>{{ appointment.service }}</td>
+              <td>{{ appointment.notes || '---' }}</td>
+              <td>
+                <span
+                  class="status-pill"
+                  [class.done]="appointment.status === 'completed'"
+                  [class.canceled]="appointment.status === 'canceled'"
+                >
+                  {{
+                    appointment.status === 'scheduled'
+                      ? 'رزرو شده'
+                      : appointment.status === 'confirmed'
+                      ? 'تایید شده'
+                      : appointment.status === 'completed'
+                      ? 'انجام شده'
+                      : 'لغو شده'
+                  }}
+                </span>
+              </td>
+              <td>
+                <div class="table-actions">
+                  <button
+                    type="button"
+                    class="outline"
+                    (click)="updateAppointmentStatus(appointment, 'confirmed')"
+                  >
+                    تایید
+                  </button>
+                  <button type="button" class="outline" (click)="updateAppointmentStatus(appointment, 'completed')">
+                    انجام شد
+                  </button>
+                  <button type="button" class="outline" (click)="updateAppointmentStatus(appointment, 'canceled')">
+                    لغو
+                  </button>
+                  <button type="button" class="danger" (click)="deleteAppointment(appointment)">حذف</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="muted" *ngIf="!modalAppointments.length">نوبتی ثبت نشده است.</p>
     </ng-container>
   </div>
 </div>

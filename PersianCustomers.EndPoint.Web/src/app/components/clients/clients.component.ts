@@ -23,16 +23,20 @@ export class ClientsComponent implements OnInit {
   isSubmitting = false;
   isEditMode = false;
   isFormModalOpen = false;
-  modalActiveTab: 'details' | 'calls' | 'tasks' = 'details';
+  modalActiveTab: 'details' | 'calls' | 'tasks' | 'appointments' = 'details';
   modalCallRecords: CallRecordDto[] = [];
   modalCallRecordsResult: PaginatedResult<CallRecordDto> | null = null;
   modalSelectedPhone = '';
   modalCallsErrorMessage = '';
   modalIsLoadingCalls = false;
   modalTasks: ClientTask[] = [];
+  modalAppointments: ClientAppointment[] = [];
   taskForm: TaskFormState = this.getEmptyTaskForm();
+  appointmentForm: AppointmentFormState = this.getEmptyAppointmentForm();
   taskErrorMessage = '';
   taskSuccessMessage = '';
+  appointmentErrorMessage = '';
+  appointmentSuccessMessage = '';
   startDate = this.formatDate(this.addDays(new Date(), -7));
   endDate = this.formatDate(new Date());
   formData: ClientDto = this.getEmptyForm();
@@ -86,6 +90,7 @@ export class ClientsComponent implements OnInit {
     this.formSuccessMessage = '';
     this.resetModalCalls();
     this.resetModalTasks();
+    this.resetModalAppointments();
     this.isFormModalOpen = true;
   }
 
@@ -96,6 +101,7 @@ export class ClientsComponent implements OnInit {
     this.formSuccessMessage = '';
     this.resetModalCalls();
     this.loadTasksForClient(client.id);
+    this.loadAppointmentsForClient(client.id);
     this.isFormModalOpen = true;
   }
 
@@ -107,6 +113,7 @@ export class ClientsComponent implements OnInit {
     this.formErrorMessage = '';
     this.resetModalCalls();
     this.resetModalTasks();
+    this.resetModalAppointments();
   }
 
   submitClient() {
@@ -221,7 +228,7 @@ export class ClientsComponent implements OnInit {
     });
   }
 
-  setModalTab(tab: 'details' | 'calls' | 'tasks') {
+  setModalTab(tab: 'details' | 'calls' | 'tasks' | 'appointments') {
     this.modalActiveTab = tab;
     if (tab === 'calls') {
       this.prepareModalCalls();
@@ -312,6 +319,61 @@ export class ClientsComponent implements OnInit {
     this.taskSuccessMessage = '';
   }
 
+  addAppointment() {
+    this.appointmentErrorMessage = '';
+    this.appointmentSuccessMessage = '';
+
+    if (!this.formData.id) {
+      this.appointmentErrorMessage = 'برای ثبت نوبت ابتدا باید مشتری ذخیره شود.';
+      return;
+    }
+
+    if (!this.appointmentForm.date || !this.appointmentForm.time || !this.appointmentForm.service) {
+      this.appointmentErrorMessage = 'تاریخ، ساعت و نوع نوبت را وارد کنید.';
+      return;
+    }
+
+    const appointment: ClientAppointment = {
+      id: this.generateAppointmentId(),
+      date: this.appointmentForm.date,
+      time: this.appointmentForm.time,
+      service: this.appointmentForm.service,
+      notes: this.appointmentForm.notes,
+      status: 'scheduled',
+      createdAt: new Date().toISOString()
+    };
+
+    this.modalAppointments = [appointment, ...this.modalAppointments];
+    this.sortModalAppointments();
+    this.saveAppointmentsToStorage(this.formData.id, this.modalAppointments);
+    this.appointmentForm = this.getEmptyAppointmentForm();
+    this.appointmentSuccessMessage = 'نوبت با موفقیت ثبت شد.';
+  }
+
+  resetAppointmentForm() {
+    this.appointmentForm = this.getEmptyAppointmentForm();
+    this.appointmentErrorMessage = '';
+    this.appointmentSuccessMessage = '';
+  }
+
+  updateAppointmentStatus(appointment: ClientAppointment, status: AppointmentStatus) {
+    appointment.status = status;
+    if (this.formData.id) {
+      this.saveAppointmentsToStorage(this.formData.id, this.modalAppointments);
+    }
+  }
+
+  deleteAppointment(appointment: ClientAppointment) {
+    this.modalAppointments = this.modalAppointments.filter((item) => item.id !== appointment.id);
+    if (this.formData.id) {
+      this.saveAppointmentsToStorage(this.formData.id, this.modalAppointments);
+    }
+  }
+
+  canAddAppointment() {
+    return !!this.formData.id && !!this.appointmentForm.date && !!this.appointmentForm.time && !!this.appointmentForm.service;
+  }
+
   toggleTaskDone(task: ClientTask) {
     task.isDone = !task.isDone;
     if (this.formData.id) {
@@ -356,6 +418,13 @@ export class ClientsComponent implements OnInit {
     this.taskSuccessMessage = '';
   }
 
+  private resetModalAppointments() {
+    this.modalAppointments = [];
+    this.appointmentForm = this.getEmptyAppointmentForm();
+    this.appointmentErrorMessage = '';
+    this.appointmentSuccessMessage = '';
+  }
+
   private loadTasksForClient(clientId?: number) {
     if (!clientId) {
       this.resetModalTasks();
@@ -375,6 +444,25 @@ export class ClientsComponent implements OnInit {
     localStorage.setItem(this.getTaskStorageKey(clientId), JSON.stringify(tasks));
   }
 
+  private loadAppointmentsForClient(clientId?: number) {
+    if (!clientId) {
+      this.resetModalAppointments();
+      return;
+    }
+
+    try {
+      const stored = localStorage.getItem(this.getAppointmentStorageKey(clientId));
+      this.modalAppointments = stored ? (JSON.parse(stored) as ClientAppointment[]) : [];
+    } catch {
+      this.modalAppointments = [];
+    }
+    this.sortModalAppointments();
+  }
+
+  private saveAppointmentsToStorage(clientId: number, appointments: ClientAppointment[]) {
+    localStorage.setItem(this.getAppointmentStorageKey(clientId), JSON.stringify(appointments));
+  }
+
   private sortModalTasks() {
     this.modalTasks = [...this.modalTasks].sort((a, b) => {
       const dateA = new Date(`${a.date}T${a.time || '00:00'}`).getTime();
@@ -387,6 +475,18 @@ export class ClientsComponent implements OnInit {
     return `client_tasks_${clientId}`;
   }
 
+  private sortModalAppointments() {
+    this.modalAppointments = [...this.modalAppointments].sort((a, b) => {
+      const dateA = new Date(`${a.date}T${a.time || '00:00'}`).getTime();
+      const dateB = new Date(`${b.date}T${b.time || '00:00'}`).getTime();
+      return dateA - dateB;
+    });
+  }
+
+  private getAppointmentStorageKey(clientId: number) {
+    return `client_appointments_${clientId}`;
+  }
+
   private getEmptyTaskForm(): TaskFormState {
     return {
       date: '',
@@ -396,7 +496,20 @@ export class ClientsComponent implements OnInit {
     };
   }
 
+  private getEmptyAppointmentForm(): AppointmentFormState {
+    return {
+      date: '',
+      time: '',
+      service: '',
+      notes: ''
+    };
+  }
+
   private generateTaskId() {
+    return `${Date.now()}_${Math.random().toString(16).slice(2)}`;
+  }
+
+  private generateAppointmentId() {
     return `${Date.now()}_${Math.random().toString(16).slice(2)}`;
   }
 
@@ -435,4 +548,23 @@ interface TaskFormState {
   time: string;
   subject: string;
   description: string;
+}
+
+type AppointmentStatus = 'scheduled' | 'confirmed' | 'completed' | 'canceled';
+
+interface ClientAppointment {
+  id: string;
+  date: string;
+  time: string;
+  service: string;
+  notes: string;
+  status: AppointmentStatus;
+  createdAt: string;
+}
+
+interface AppointmentFormState {
+  date: string;
+  time: string;
+  service: string;
+  notes: string;
 }
