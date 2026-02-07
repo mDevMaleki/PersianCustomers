@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using PersianCustomers.EndPoints.WebApi.Options;
 
@@ -56,6 +57,13 @@ public class AsteriskRecordingSyncService : BackgroundService
             return;
         }
 
+        var rsyncPath = ResolveExecutablePath("rsync");
+        if (string.IsNullOrWhiteSpace(rsyncPath))
+        {
+            _logger.LogWarning("Asterisk recording sync skipped because rsync was not found on the system PATH.");
+            return;
+        }
+
         Directory.CreateDirectory(options.DestinationDirectory);
 
         var tempFile = Path.GetTempFileName();
@@ -70,7 +78,7 @@ public class AsteriskRecordingSyncService : BackgroundService
         {
             using var process = new Process
             {
-                StartInfo = CreateProcessStartInfo(options, tempFile)
+                StartInfo = CreateProcessStartInfo(options, tempFile, rsyncPath)
             };
 
             if (!process.Start())
@@ -105,7 +113,10 @@ public class AsteriskRecordingSyncService : BackgroundService
         }
     }
 
-    private static ProcessStartInfo CreateProcessStartInfo(AsteriskRecordingSyncOptions options, string askPassPath)
+    private static ProcessStartInfo CreateProcessStartInfo(
+        AsteriskRecordingSyncOptions options,
+        string askPassPath,
+        string rsyncPath)
     {
         var remoteDir = options.RemoteDirectory.TrimEnd('/') + "/";
         var destDir = options.DestinationDirectory.TrimEnd('/') + "/";
@@ -113,7 +124,7 @@ public class AsteriskRecordingSyncService : BackgroundService
 
         var startInfo = new ProcessStartInfo
         {
-            FileName = "rsync",
+            FileName = rsyncPath,
             UseShellExecute = false,
             RedirectStandardOutput = true,
             RedirectStandardError = true
@@ -134,6 +145,45 @@ public class AsteriskRecordingSyncService : BackgroundService
         startInfo.Environment["DISPLAY"] = "1";
 
         return startInfo;
+    }
+
+    private static string? ResolveExecutablePath(string executableName)
+    {
+        var pathValue = Environment.GetEnvironmentVariable("PATH");
+        if (string.IsNullOrWhiteSpace(pathValue))
+        {
+            return null;
+        }
+
+        var extensions = new List<string>(StringComparer.OrdinalIgnoreCase) { string.Empty };
+        if (OperatingSystem.IsWindows())
+        {
+            var pathext = Environment.GetEnvironmentVariable("PATHEXT");
+            if (!string.IsNullOrWhiteSpace(pathext))
+            {
+                extensions.AddRange(pathext.Split(';', StringSplitOptions.RemoveEmptyEntries));
+            }
+        }
+
+        foreach (var pathSegment in pathValue.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
+        {
+            var trimmed = pathSegment.Trim();
+            if (string.IsNullOrWhiteSpace(trimmed))
+            {
+                continue;
+            }
+
+            foreach (var extension in extensions)
+            {
+                var candidate = Path.Combine(trimmed, executableName + extension);
+                if (File.Exists(candidate))
+                {
+                    return candidate;
+                }
+            }
+        }
+
+        return null;
     }
 
     private static string? ResolvePassword(AsteriskRecordingSyncOptions options)
