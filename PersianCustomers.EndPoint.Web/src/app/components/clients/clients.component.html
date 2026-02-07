@@ -53,6 +53,13 @@
       >
         نوبت‌ها
       </button>
+      <button
+        type="button"
+        [class.active]="modalActiveTab === 'treatment'"
+        (click)="setModalTab('treatment')"
+      >
+        طرح درمان
+      </button>
     </div>
 
     <p class="error" *ngIf="formErrorMessage">{{ formErrorMessage }}</p>
@@ -393,6 +400,85 @@
       </div>
 
       <p class="muted" *ngIf="!modalAppointments.length">نوبتی ثبت نشده است.</p>
+    </ng-container>
+
+    <ng-container *ngIf="modalActiveTab === 'treatment'">
+      <div class="treatment-header">
+        <div>
+          <p class="muted">طرح درمان را از روی تصویر انتخاب کنید و توضیحات لازم را ثبت کنید.</p>
+          <p class="muted" *ngIf="!formData.id">برای ذخیره طرح درمان ابتدا باید مشتری ذخیره شود.</p>
+        </div>
+        <div class="table-actions">
+          <button type="button" class="outline" (click)="clearTreatmentSelection()">پاک کردن انتخاب‌ها</button>
+        </div>
+      </div>
+
+      <div class="treatment-content">
+        <div class="treatment-diagram">
+          <svg class="teeth-diagram" viewBox="0 0 520 220" aria-label="نقشه دندان‌ها">
+            <path
+              class="mouth-shape"
+              d="M40 40 C120 10 400 10 480 40 C500 55 510 90 500 120 C470 170 340 195 260 195 C180 195 50 170 20 120 C10 90 20 55 40 40 Z"
+            ></path>
+            <path class="gum-shape" d="M70 70 C150 50 370 50 450 70 C460 95 455 120 445 130 C380 160 140 160 75 130 C65 120 60 95 70 70 Z"></path>
+            <ng-container *ngFor="let tooth of treatmentUpperTeeth">
+              <g
+                class="tooth"
+                [class.selected]="isToothSelected(tooth.id)"
+                (click)="toggleTooth(tooth)"
+                role="button"
+                tabindex="0"
+                (keydown.enter)="toggleTooth(tooth)"
+                (keydown.space)="toggleTooth(tooth)"
+              >
+                <rect class="tooth-shape" [attr.x]="tooth.x" [attr.y]="tooth.y" width="22" height="26" rx="6"></rect>
+                <text class="tooth-label" [attr.x]="tooth.x + 11" [attr.y]="tooth.y + 17">
+                  {{ getPersianNumber(tooth.label) }}
+                </text>
+              </g>
+            </ng-container>
+            <ng-container *ngFor="let tooth of treatmentLowerTeeth">
+              <g
+                class="tooth"
+                [class.selected]="isToothSelected(tooth.id)"
+                (click)="toggleTooth(tooth)"
+                role="button"
+                tabindex="0"
+                (keydown.enter)="toggleTooth(tooth)"
+                (keydown.space)="toggleTooth(tooth)"
+              >
+                <rect class="tooth-shape" [attr.x]="tooth.x" [attr.y]="tooth.y" width="22" height="26" rx="6"></rect>
+                <text class="tooth-label" [attr.x]="tooth.x + 11" [attr.y]="tooth.y + 17">
+                  {{ getPersianNumber(tooth.label) }}
+                </text>
+              </g>
+            </ng-container>
+          </svg>
+          <p class="muted">برای انتخاب هر دندان روی آن کلیک کنید.</p>
+        </div>
+
+        <div class="treatment-details">
+          <h4>دندان‌های انتخاب شده</h4>
+          <div class="selected-teeth" *ngIf="selectedTreatmentTeeth.length; else noSelectedTeeth">
+            <span class="tooth-chip" *ngFor="let tooth of selectedTreatmentTeeth">
+              {{ tooth.archLabel }} {{ getPersianNumber(tooth.label) }}
+            </span>
+          </div>
+          <ng-template #noSelectedTeeth>
+            <p class="muted">هنوز دندانی انتخاب نشده است.</p>
+          </ng-template>
+
+          <label class="treatment-notes">
+            توضیحات طرح درمان
+            <textarea
+              rows="4"
+              name="treatmentNotes"
+              [(ngModel)]="treatmentPlanNote"
+              (ngModelChange)="persistTreatmentPlan()"
+            ></textarea>
+          </label>
+        </div>
+      </div>
     </ng-container>
   </div>
 </div>
