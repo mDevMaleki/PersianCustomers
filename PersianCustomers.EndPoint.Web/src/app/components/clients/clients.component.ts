@@ -23,7 +23,7 @@ export class ClientsComponent implements OnInit {
   isSubmitting = false;
   isEditMode = false;
   isFormModalOpen = false;
-  modalActiveTab: 'details' | 'calls' | 'tasks' | 'appointments' = 'details';
+  modalActiveTab: 'details' | 'calls' | 'tasks' | 'appointments' | 'treatment' = 'details';
   modalCallRecords: CallRecordDto[] = [];
   modalCallRecordsResult: PaginatedResult<CallRecordDto> | null = null;
   modalSelectedPhone = '';
@@ -31,6 +31,11 @@ export class ClientsComponent implements OnInit {
   modalIsLoadingCalls = false;
   modalTasks: ClientTask[] = [];
   modalAppointments: ClientAppointment[] = [];
+  treatmentUpperTeeth: ToothPosition[] = this.createTeethRow('upper', 70);
+  treatmentLowerTeeth: ToothPosition[] = this.createTeethRow('lower', 140);
+  selectedTeethIds: string[] = [];
+  treatmentPlanNote = '';
+  private treatmentTeeth: ToothPosition[] = [...this.treatmentUpperTeeth, ...this.treatmentLowerTeeth];
   taskForm: TaskFormState = this.getEmptyTaskForm();
   appointmentForm: AppointmentFormState = this.getEmptyAppointmentForm();
   taskErrorMessage = '';
@@ -91,6 +96,7 @@ export class ClientsComponent implements OnInit {
     this.resetModalCalls();
     this.resetModalTasks();
     this.resetModalAppointments();
+    this.resetModalTreatment();
     this.isFormModalOpen = true;
   }
 
@@ -102,6 +108,7 @@ export class ClientsComponent implements OnInit {
     this.resetModalCalls();
     this.loadTasksForClient(client.id);
     this.loadAppointmentsForClient(client.id);
+    this.loadTreatmentPlanForClient(client.id);
     this.isFormModalOpen = true;
   }
 
@@ -114,6 +121,7 @@ export class ClientsComponent implements OnInit {
     this.resetModalCalls();
     this.resetModalTasks();
     this.resetModalAppointments();
+    this.resetModalTreatment();
   }
 
   submitClient() {
@@ -228,7 +236,7 @@ export class ClientsComponent implements OnInit {
     });
   }
 
-  setModalTab(tab: 'details' | 'calls' | 'tasks' | 'appointments') {
+  setModalTab(tab: 'details' | 'calls' | 'tasks' | 'appointments' | 'treatment') {
     this.modalActiveTab = tab;
     if (tab === 'calls') {
       this.prepareModalCalls();
@@ -392,6 +400,39 @@ export class ClientsComponent implements OnInit {
     return !!this.formData.id && !!this.taskForm.date && !!this.taskForm.time && !!this.taskForm.subject;
   }
 
+  toggleTooth(tooth: ToothPosition) {
+    if (this.selectedTeethIds.includes(tooth.id)) {
+      this.selectedTeethIds = this.selectedTeethIds.filter((id) => id !== tooth.id);
+    } else {
+      this.selectedTeethIds = [...this.selectedTeethIds, tooth.id];
+    }
+    this.persistTreatmentPlan();
+  }
+
+  isToothSelected(toothId: string) {
+    return this.selectedTeethIds.includes(toothId);
+  }
+
+  clearTreatmentSelection() {
+    this.selectedTeethIds = [];
+    this.persistTreatmentPlan();
+  }
+
+  persistTreatmentPlan() {
+    if (!this.formData.id) {
+      return;
+    }
+    this.saveTreatmentPlanToStorage(this.formData.id);
+  }
+
+  get selectedTreatmentTeeth() {
+    return this.treatmentTeeth.filter((tooth) => this.selectedTeethIds.includes(tooth.id));
+  }
+
+  getPersianNumber(value: number) {
+    return new Intl.NumberFormat('fa-IR').format(value);
+  }
+
   private addDays(date: Date, amount: number) {
     const updated = new Date(date);
     updated.setDate(updated.getDate() + amount);
@@ -423,6 +464,11 @@ export class ClientsComponent implements OnInit {
     this.appointmentForm = this.getEmptyAppointmentForm();
     this.appointmentErrorMessage = '';
     this.appointmentSuccessMessage = '';
+  }
+
+  private resetModalTreatment() {
+    this.selectedTeethIds = [];
+    this.treatmentPlanNote = '';
   }
 
   private loadTasksForClient(clientId?: number) {
@@ -463,6 +509,34 @@ export class ClientsComponent implements OnInit {
     localStorage.setItem(this.getAppointmentStorageKey(clientId), JSON.stringify(appointments));
   }
 
+  private loadTreatmentPlanForClient(clientId?: number) {
+    if (!clientId) {
+      this.resetModalTreatment();
+      return;
+    }
+
+    try {
+      const stored = localStorage.getItem(this.getTreatmentStorageKey(clientId));
+      if (stored) {
+        const parsed = JSON.parse(stored) as TreatmentPlanStorage;
+        this.selectedTeethIds = parsed.selectedTeethIds ?? [];
+        this.treatmentPlanNote = parsed.note ?? '';
+        return;
+      }
+    } catch {
+      // ignore
+    }
+    this.resetModalTreatment();
+  }
+
+  private saveTreatmentPlanToStorage(clientId: number) {
+    const payload: TreatmentPlanStorage = {
+      selectedTeethIds: this.selectedTeethIds,
+      note: this.treatmentPlanNote
+    };
+    localStorage.setItem(this.getTreatmentStorageKey(clientId), JSON.stringify(payload));
+  }
+
   private sortModalTasks() {
     this.modalTasks = [...this.modalTasks].sort((a, b) => {
       const dateA = new Date(`${a.date}T${a.time || '00:00'}`).getTime();
@@ -485,6 +559,10 @@ export class ClientsComponent implements OnInit {
 
   private getAppointmentStorageKey(clientId: number) {
     return `client_appointments_${clientId}`;
+  }
+
+  private getTreatmentStorageKey(clientId: number) {
+    return `client_treatment_${clientId}`;
   }
 
   private getEmptyTaskForm(): TaskFormState {
@@ -531,6 +609,20 @@ export class ClientsComponent implements OnInit {
       mobileNumber1: ''
     };
   }
+
+  private createTeethRow(arch: ToothArch, y: number): ToothPosition[] {
+    const labels = [8, 7, 6, 5, 4, 3, 2, 1, 1, 2, 3, 4, 5, 6, 7, 8];
+    const startX = 36;
+    const step = 28;
+    return labels.map((label, index) => ({
+      id: `${arch}-${index + 1}`,
+      label,
+      x: startX + index * step,
+      y,
+      arch,
+      archLabel: arch === 'upper' ? 'بالا' : 'پایین'
+    }));
+  }
 }
 
 interface ClientTask {
@@ -567,4 +659,20 @@ interface AppointmentFormState {
   time: string;
   service: string;
   notes: string;
+}
+
+type ToothArch = 'upper' | 'lower';
+
+interface ToothPosition {
+  id: string;
+  label: number;
+  x: number;
+  y: number;
+  arch: ToothArch;
+  archLabel: string;
+}
+
+interface TreatmentPlanStorage {
+  selectedTeethIds: string[];
+  note: string;
 }

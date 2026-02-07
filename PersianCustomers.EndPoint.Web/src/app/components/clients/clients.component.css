@@ -84,6 +84,15 @@
   margin-top: 1rem;
 }
 
+.treatment-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 1rem;
+}
+
 .close-button {
   border: 1px solid #cbd5f5;
   background: transparent;
@@ -385,4 +394,96 @@
   color: #3455ff;
   font-size: 0.8rem;
   text-decoration: none;
+}
+
+.treatment-content {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.treatment-diagram {
+  flex: 1 1 320px;
+  display: grid;
+  gap: 0.6rem;
+  justify-items: center;
+}
+
+.teeth-diagram {
+  width: min(520px, 100%);
+  height: auto;
+}
+
+.mouth-shape {
+  fill: #f05a56;
+}
+
+.gum-shape {
+  fill: #f7a7a4;
+}
+
+.tooth {
+  cursor: pointer;
+  outline: none;
+}
+
+.tooth-shape {
+  fill: #ffffff;
+  stroke: #e2e8f0;
+  stroke-width: 1;
+}
+
+.tooth-label {
+  fill: #3b82f6;
+  font-size: 10px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+.tooth.selected .tooth-shape {
+  fill: #bfdbfe;
+  stroke: #3b82f6;
+}
+
+.tooth:focus-visible .tooth-shape {
+  stroke: #1d4ed8;
+  stroke-width: 2;
+}
+
+.treatment-details {
+  flex: 1 1 280px;
+  display: grid;
+  gap: 1rem;
+}
+
+.selected-teeth {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tooth-chip {
+  background: rgba(52, 85, 255, 0.1);
+  color: #3455ff;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.treatment-notes {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.treatment-notes textarea {
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 0.6rem 0.7rem;
+  font-family: inherit;
+  resize: vertical;
 }
