@@ -22,6 +22,7 @@ export class ClientsComponent implements OnInit {
   isLoadingCalls = false;
   isSubmitting = false;
   isEditMode = false;
+  isFormModalOpen = false;
   startDate = this.formatDate(this.addDays(new Date(), -7));
   endDate = this.formatDate(new Date());
   formData: ClientDto = this.getEmptyForm();
@@ -73,6 +74,7 @@ export class ClientsComponent implements OnInit {
     this.formData = this.getEmptyForm();
     this.formErrorMessage = '';
     this.formSuccessMessage = '';
+    this.isFormModalOpen = true;
   }
 
   startEditClient(client: ClientDto) {
@@ -80,6 +82,15 @@ export class ClientsComponent implements OnInit {
     this.formData = { ...client };
     this.formErrorMessage = '';
     this.formSuccessMessage = '';
+    this.isFormModalOpen = true;
+  }
+
+  closeFormModal() {
+    if (this.isSubmitting) {
+      return;
+    }
+    this.isFormModalOpen = false;
+    this.formErrorMessage = '';
   }
 
   submitClient() {
@@ -92,14 +103,15 @@ export class ClientsComponent implements OnInit {
     if (this.isEditMode) {
       this.api.updateClient(request).subscribe({
         next: (response: BaseResponse<boolean>) => {
-          if (response.isSuccess) {
-            this.formSuccessMessage = 'اطلاعات مشتری با موفقیت ویرایش شد.';
-            this.isEditMode = false;
-            this.formData = this.getEmptyForm();
-            this.loadClients();
-          } else {
-            this.formErrorMessage = response.message || 'ثبت اطلاعات مشتری ناموفق بود.';
-          }
+        if (response.isSuccess) {
+          this.formSuccessMessage = 'اطلاعات مشتری با موفقیت ویرایش شد.';
+          this.isEditMode = false;
+          this.formData = this.getEmptyForm();
+          this.loadClients();
+          this.isFormModalOpen = false;
+        } else {
+          this.formErrorMessage = response.message || 'ثبت اطلاعات مشتری ناموفق بود.';
+        }
           this.isSubmitting = false;
         },
         error: (err: unknown) => {
@@ -116,6 +128,7 @@ export class ClientsComponent implements OnInit {
           this.formSuccessMessage = 'مشتری با موفقیت ثبت شد.';
           this.formData = this.getEmptyForm();
           this.loadClients();
+          this.isFormModalOpen = false;
         } else {
           this.formErrorMessage = response.message || 'ثبت اطلاعات مشتری ناموفق بود.';
         }
