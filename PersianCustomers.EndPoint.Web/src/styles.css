@@ -1,20 +1,37 @@
+@font-face {
+  font-family: 'YekanBakh';
+  src: url('/assets/fonts/YEKANBAKHBOLD.TTF') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'YekanBakh';
+  src: url('/assets/fonts/YEKANBAKHHEAVY.TTF') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+
 * {
   box-sizing: border-box;
-  font-family: 'Vazirmatn', 'Segoe UI', sans-serif;
+  font-family: 'YekanBakh', 'Segoe UI', sans-serif;
 }
 
 body {
   margin: 0;
   background: #f4f6fb;
   direction: rtl;
+  font-weight: 700; /* پیش‌فرض Bold */
 }
 
-h1,
-h2,
-h3,
-small,
-button,
-input,
-textarea {
+/* اگر میخوای بعضی جاها Heavy بشه */
+.heavy, h1, h2 {
+  font-weight: 800;
+}
+
+h1, h2, h3, small, button, input, textarea {
   font-family: inherit;
 }
