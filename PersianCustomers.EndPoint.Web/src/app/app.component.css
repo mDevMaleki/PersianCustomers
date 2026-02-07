@@ -2,15 +2,18 @@
   min-height: 100vh;
   background: #f4f6fb;
   color: #1f1f1f;
+  display: flex;
+  align-items: stretch;
 }
 
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.2rem 2rem;
+.app-sidebar {
+  width: 240px;
   background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  border-left: 1px solid #e5e7eb;
+  padding: 1.5rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .brand {
@@ -24,20 +27,22 @@
   color: #6b7280;
 }
 
-nav {
+.sidebar-nav {
   display: flex;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.8rem;
 }
 
-nav a {
+.sidebar-nav a {
   text-decoration: none;
   color: #1f1f1f;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
   font-weight: 600;
+  background: #f4f6fb;
 }
 
-nav a.active {
+.sidebar-nav a.active {
   background: #3455ff;
   color: #fff;
 }
@@ -46,6 +51,7 @@ nav a.active {
   padding: 2rem;
   display: grid;
   gap: 2rem;
+  flex: 1;
 }
 
 .card {
