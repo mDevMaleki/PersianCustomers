@@ -201,12 +201,8 @@ export class ClientsComponent implements OnInit {
       return recordingFile;
     }
 
-    if (recordingFile.startsWith('/api/')) {
-      return recordingFile;
-    }
-
     const normalized = recordingFile.includes('%') ? recordingFile : encodeURIComponent(recordingFile);
-    return `/api/Recordings/stream/${normalized}`;
+    return `http://193.151.152.32:5050/api/Recordings/stream/${normalized}`;
   }
 
   private addDays(date: Date, amount: number) {
