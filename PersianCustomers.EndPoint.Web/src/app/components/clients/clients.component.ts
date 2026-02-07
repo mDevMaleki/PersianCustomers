@@ -35,6 +35,13 @@ export class ClientsComponent implements OnInit {
   treatmentLowerTeeth: ToothPosition[] = this.createTeethRow('lower', 140);
   selectedTeethIds: string[] = [];
   treatmentPlanNote = '';
+  treatmentToothServices: Record<string, TreatmentToothService> = {};
+  installmentPlanOptions: InstallmentPlanOption[] = [
+    { months: 2, label: '۲ ماهه' },
+    { months: 6, label: '۶ ماهه' },
+    { months: 12, label: '۱۲ ماهه' }
+  ];
+  selectedInstallmentMonths = 6;
   private treatmentTeeth: ToothPosition[] = [...this.treatmentUpperTeeth, ...this.treatmentLowerTeeth];
   taskForm: TaskFormState = this.getEmptyTaskForm();
   appointmentForm: AppointmentFormState = this.getEmptyAppointmentForm();
@@ -51,6 +58,13 @@ export class ClientsComponent implements OnInit {
     { value: 2, label: 'درمان' },
     { value: 3, label: 'لمینت' },
     { value: 4, label: 'ترمیمی' }
+  ];
+  treatmentServiceOptions: TreatmentServiceOption[] = [
+    { value: 0, label: 'ایمپلنت', defaultPrice: 12000000 },
+    { value: 1, label: 'زیبایی', defaultPrice: 8000000 },
+    { value: 2, label: 'درمان', defaultPrice: 5000000 },
+    { value: 3, label: 'لمینت', defaultPrice: 9000000 },
+    { value: 4, label: 'ترمیمی', defaultPrice: 3000000 }
   ];
 
   constructor(private api: ApiService) {}
@@ -403,8 +417,10 @@ export class ClientsComponent implements OnInit {
   toggleTooth(tooth: ToothPosition) {
     if (this.selectedTeethIds.includes(tooth.id)) {
       this.selectedTeethIds = this.selectedTeethIds.filter((id) => id !== tooth.id);
+      delete this.treatmentToothServices[tooth.id];
     } else {
       this.selectedTeethIds = [...this.selectedTeethIds, tooth.id];
+      this.ensureToothService(tooth.id);
     }
     this.persistTreatmentPlan();
   }
@@ -415,6 +431,7 @@ export class ClientsComponent implements OnInit {
 
   clearTreatmentSelection() {
     this.selectedTeethIds = [];
+    this.treatmentToothServices = {};
     this.persistTreatmentPlan();
   }
 
@@ -429,8 +446,62 @@ export class ClientsComponent implements OnInit {
     return this.treatmentTeeth.filter((tooth) => this.selectedTeethIds.includes(tooth.id));
   }
 
+  get treatmentTotal() {
+    return this.selectedTeethIds.reduce((sum, toothId) => {
+      const service = this.treatmentToothServices[toothId];
+      return sum + (service?.price ?? 0);
+    }, 0);
+  }
+
+  get installmentMonthlyPayment() {
+    if (!this.selectedInstallmentMonths) {
+      return 0;
+    }
+    return Math.round(this.treatmentTotal / this.selectedInstallmentMonths);
+  }
+
   getPersianNumber(value: number) {
     return new Intl.NumberFormat('fa-IR').format(value);
+  }
+
+  formatPrice(value: number) {
+    return new Intl.NumberFormat('fa-IR').format(value ?? 0);
+  }
+
+  getToothService(toothId: string) {
+    this.ensureToothService(toothId);
+    return this.treatmentToothServices[toothId];
+  }
+
+  updateToothService(toothId: string, serviceValue: number) {
+    const option = this.treatmentServiceOptions.find((item) => item.value === serviceValue);
+    const current = this.treatmentToothServices[toothId];
+    this.treatmentToothServices = {
+      ...this.treatmentToothServices,
+      [toothId]: {
+        serviceValue,
+        price: option?.defaultPrice ?? current?.price ?? 0
+      }
+    };
+    this.persistTreatmentPlan();
+  }
+
+  updateToothPrice(toothId: string, price: number) {
+    const numericPrice = Number(price);
+    const current = this.treatmentToothServices[toothId] ?? this.createDefaultToothService();
+    this.treatmentToothServices = {
+      ...this.treatmentToothServices,
+      [toothId]: {
+        ...current,
+        price: Number.isFinite(numericPrice) ? Math.max(0, numericPrice) : 0
+      }
+    };
+    this.persistTreatmentPlan();
+  }
+
+  updateInstallmentPlan(months: number) {
+    this.selectedInstallmentMonths = Number(months) || 0;
+    this.persistTreatmentPlan();
   }
 
   private addDays(date: Date, amount: number) {
@@ -469,6 +540,8 @@ export class ClientsComponent implements OnInit {
   private resetModalTreatment() {
     this.selectedTeethIds = [];
     this.treatmentPlanNote = '';
+    this.treatmentToothServices = {};
+    this.selectedInstallmentMonths = 6;
   }
 
   private loadTasksForClient(clientId?: number) {
@@ -521,6 +594,10 @@ export class ClientsComponent implements OnInit {
         const parsed = JSON.parse(stored) as TreatmentPlanStorage;
         this.selectedTeethIds = parsed.selectedTeethIds ?? [];
         this.treatmentPlanNote = parsed.note ?? '';
+        this.treatmentToothServices = parsed.toothServices ?? {};
+        this.selectedInstallmentMonths = parsed.installmentMonths ?? 6;
+        this.cleanupTreatmentServices();
+        this.ensureSelectedTeethServices();
         return;
       }
     } catch {
@@ -532,7 +609,9 @@ export class ClientsComponent implements OnInit {
   private saveTreatmentPlanToStorage(clientId: number) {
     const payload: TreatmentPlanStorage = {
       selectedTeethIds: this.selectedTeethIds,
-      note: this.treatmentPlanNote
+      note: this.treatmentPlanNote,
+      toothServices: this.treatmentToothServices,
+      installmentMonths: this.selectedInstallmentMonths
     };
     localStorage.setItem(this.getTreatmentStorageKey(clientId), JSON.stringify(payload));
   }
@@ -623,6 +702,40 @@ export class ClientsComponent implements OnInit {
       archLabel: arch === 'upper' ? 'بالا' : 'پایین'
     }));
   }
+
+  private ensureToothService(toothId: string) {
+    if (!this.treatmentToothServices[toothId]) {
+      this.treatmentToothServices = {
+        ...this.treatmentToothServices,
+        [toothId]: this.createDefaultToothService()
+      };
+    }
+  }
+
+  private createDefaultToothService(): TreatmentToothService {
+    const defaultOption = this.treatmentServiceOptions[0];
+    return {
+      serviceValue: defaultOption?.value ?? 0,
+      price: defaultOption?.defaultPrice ?? 0
+    };
+  }
+
+  private cleanupTreatmentServices() {
+    const allowedIds = new Set(this.selectedTeethIds);
+    this.treatmentToothServices = Object.entries(this.treatmentToothServices).reduce<Record<string, TreatmentToothService>>(
+      (acc, [toothId, service]) => {
+        if (allowedIds.has(toothId)) {
+          acc[toothId] = service;
+        }
+        return acc;
+      },
+      {}
+    );
+  }
+
+  private ensureSelectedTeethServices() {
+    this.selectedTeethIds.forEach((toothId) => this.ensureToothService(toothId));
+  }
 }
 
 interface ClientTask {
@@ -675,4 +788,22 @@ interface ToothPosition {
 interface TreatmentPlanStorage {
   selectedTeethIds: string[];
   note: string;
+  toothServices: Record<string, TreatmentToothService>;
+  installmentMonths: number;
+}
+
+interface TreatmentServiceOption {
+  value: number;
+  label: string;
+  defaultPrice: number;
+}
+
+interface TreatmentToothService {
+  serviceValue: number;
+  price: number;
+}
+
+interface InstallmentPlanOption {
+  months: number;
+  label: string;
 }

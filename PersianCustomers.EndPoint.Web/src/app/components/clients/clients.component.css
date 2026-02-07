@@ -459,6 +459,66 @@
   gap: 1rem;
 }
 
+.treatment-services {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.treatment-services h5 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.service-row {
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) minmax(140px, 1.2fr) minmax(120px, 1fr);
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.service-row select,
+.service-row input {
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  font-family: inherit;
+}
+
+.service-tooth {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.treatment-summary {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.treatment-summary label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.treatment-summary select {
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  font-family: inherit;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  font-weight: 600;
+}
+
 .selected-teeth {
   display: flex;
   flex-wrap: wrap;
