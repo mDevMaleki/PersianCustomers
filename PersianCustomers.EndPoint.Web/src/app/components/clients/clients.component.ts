@@ -2,6 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { BaseResponse, CallRecordDto, ClientDto, PaginatedResult } from '../../models/api.models';
 
+const TOOTH_PATHS: Record<string, string> = {
+  // 'upper-1': '...d...',
+  // 'upper-2': '...d...',
+  // 'lower-16': '...d...'
+};
+
+const DEFAULT_TOOTH_FILL = 'rgba(255, 255, 255, 0.6)';
+const DEFAULT_TOOTH_STROKE = '#e5e7eb';
+const SELECTED_TOOTH_FILL = '#bfdbfe';
+const SELECTED_TOOTH_STROKE = '#3b82f6';
+
 @Component({
   selector: 'app-clients',
   templateUrl: './clients.component.html',
@@ -42,6 +53,7 @@ export class ClientsComponent implements OnInit {
   newChequeNumber = '';
   newChequeOwner = '';
   treatmentToothServices: Record<string, TreatmentToothService> = {};
+  toothPaths = TOOTH_PATHS;
   installmentPlanOptions: InstallmentPlanOption[] = [
     { months: 2, label: '۲ ماهه' },
     { months: 6, label: '۶ ماهه' },
@@ -433,6 +445,18 @@ export class ClientsComponent implements OnInit {
 
   isToothSelected(toothId: string) {
     return this.selectedTeethIds.includes(toothId);
+  }
+
+  getToothPath(toothId: string) {
+    return this.toothPaths[toothId];
+  }
+
+  getToothFill(toothId: string) {
+    return this.isToothSelected(toothId) ? SELECTED_TOOTH_FILL : DEFAULT_TOOTH_FILL;
+  }
+
+  getToothStroke(toothId: string) {
+    return this.isToothSelected(toothId) ? SELECTED_TOOTH_STROKE : DEFAULT_TOOTH_STROKE;
   }
 
   clearTreatmentSelection() {
