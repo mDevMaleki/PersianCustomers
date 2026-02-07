@@ -249,7 +249,13 @@
         </label>
         <label>
           ساعت
-          <input type="time" name="taskTime" [(ngModel)]="taskForm.time" />
+          <input
+            type="time"
+            name="taskTime"
+            lang="fa-IR"
+            [(ngModel)]="taskForm.time"
+            (blur)="taskForm.time = normalizeTimeInput(taskForm.time)"
+          />
         </label>
         <label class="full">
           موضوع پیگیری
@@ -331,7 +337,13 @@
         </label>
         <label>
           ساعت
-          <input type="time" name="appointmentTime" [(ngModel)]="appointmentForm.time" />
+          <input
+            type="time"
+            name="appointmentTime"
+            lang="fa-IR"
+            [(ngModel)]="appointmentForm.time"
+            (blur)="appointmentForm.time = normalizeTimeInput(appointmentForm.time)"
+          />
         </label>
         <label class="full">
           نوع نوبت
