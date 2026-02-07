@@ -505,11 +505,15 @@
               <input
                 type="number"
                 min="0"
-                [(ngModel)]="treatmentPrepaymentAmount"
-                (ngModelChange)="persistTreatmentPlan()"
+                [ngModel]="treatmentPrepaymentAmount"
+                (ngModelChange)="updatePrepaymentAmount($event)"
                 placeholder="مبلغ پیش پرداخت (تومان)"
               />
             </label>
+            <div class="summary-row">
+              <span>مانده پس از پیش پرداخت</span>
+              <strong>{{ formatPrice(remainingBalance) }} تومان</strong>
+            </div>
             <label>
               طرح اقساطی
               <select
@@ -526,14 +530,13 @@
               <strong>{{ formatPrice(installmentMonthlyPayment) }} تومان</strong>
             </div>
             <div class="treatment-checks">
-              <h5>اطلاعات چک</h5>
-              <div class="check-grid">
+              <h5>ثبت چک‌ها</h5>
+              <div class="check-grid check-form">
                 <label>
                   تاریخ چک
                   <input
                     type="date"
-                    [(ngModel)]="treatmentChequeDate"
-                    (ngModelChange)="persistTreatmentPlan()"
+                    [(ngModel)]="newChequeDate"
                   />
                 </label>
                 <label>
@@ -541,8 +544,8 @@
                   <input
                     type="number"
                     min="0"
-                    [(ngModel)]="treatmentChequeAmount"
-                    (ngModelChange)="persistTreatmentPlan()"
+                    [ngModel]="newChequeAmount"
+                    (ngModelChange)="updateChequeAmount($event)"
                     placeholder="مبلغ چک (تومان)"
                   />
                 </label>
@@ -550,8 +553,7 @@
                   شماره چک
                   <input
                     type="text"
-                    [(ngModel)]="treatmentChequeNumber"
-                    (ngModelChange)="persistTreatmentPlan()"
+                    [(ngModel)]="newChequeNumber"
                     placeholder="شماره چک"
                   />
                 </label>
@@ -559,12 +561,28 @@
                   صاحب چک
                   <input
                     type="text"
-                    [(ngModel)]="treatmentChequeOwner"
-                    (ngModelChange)="persistTreatmentPlan()"
+                    [(ngModel)]="newChequeOwner"
                     placeholder="نام صاحب چک"
                   />
                 </label>
               </div>
+              <button class="outline add-check" type="button" (click)="addCheque()">افزودن چک</button>
+              <div class="checks-list" *ngIf="treatmentCheques.length; else noChecks">
+                <div class="check-item" *ngFor="let cheque of treatmentCheques">
+                  <div>
+                    <strong>{{ cheque.number || 'چک بدون شماره' }}</strong>
+                    <p class="muted">
+                      {{ cheque.date ? ('تاریخ: ' + cheque.date) : 'بدون تاریخ' }} ·
+                      مبلغ: {{ formatPrice(cheque.amount) }} تومان ·
+                      صاحب: {{ cheque.owner || '---' }}
+                    </p>
+                  </div>
+                  <button class="ghost" type="button" (click)="removeCheque(cheque.id)">حذف</button>
+                </div>
+              </div>
+              <ng-template #noChecks>
+                <p class="muted">هنوز چکی ثبت نشده است.</p>
+              </ng-template>
             </div>
           </div>
 
@@ -577,6 +595,34 @@
               (ngModelChange)="persistTreatmentPlan()"
             ></textarea>
           </label>
+
+          <div class="treatment-plan-card">
+            <h5>جمع‌بندی طرح درمان</h5>
+            <div class="plan-row">
+              <span>جمع کل</span>
+              <strong>{{ formatPrice(treatmentTotal) }} تومان</strong>
+            </div>
+            <div class="plan-row">
+              <span>پیش پرداخت</span>
+              <strong>{{ formatPrice(treatmentPrepaymentAmount) }} تومان</strong>
+            </div>
+            <div class="plan-row">
+              <span>مانده</span>
+              <strong>{{ formatPrice(remainingBalance) }} تومان</strong>
+            </div>
+            <div class="plan-row">
+              <span>طرح اقساطی</span>
+              <strong>{{ getPersianNumber(selectedInstallmentMonths) }} ماهه</strong>
+            </div>
+            <div class="plan-row">
+              <span>مبلغ هر قسط</span>
+              <strong>{{ formatPrice(installmentMonthlyPayment) }} تومان</strong>
+            </div>
+            <div class="plan-row">
+              <span>جمع چک‌ها</span>
+              <strong>{{ formatPrice(totalChequeAmount) }} تومان</strong>
+            </div>
+          </div>
         </div>
       </div>
     </ng-container>

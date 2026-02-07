@@ -36,10 +36,11 @@ export class ClientsComponent implements OnInit {
   selectedTeethIds: string[] = [];
   treatmentPlanNote = '';
   treatmentPrepaymentAmount = 0;
-  treatmentChequeDate = '';
-  treatmentChequeAmount = 0;
-  treatmentChequeNumber = '';
-  treatmentChequeOwner = '';
+  treatmentCheques: TreatmentCheque[] = [];
+  newChequeDate = '';
+  newChequeAmount = 0;
+  newChequeNumber = '';
+  newChequeOwner = '';
   treatmentToothServices: Record<string, TreatmentToothService> = {};
   installmentPlanOptions: InstallmentPlanOption[] = [
     { months: 2, label: '۲ ماهه' },
@@ -462,7 +463,15 @@ export class ClientsComponent implements OnInit {
     if (!this.selectedInstallmentMonths) {
       return 0;
     }
-    return Math.round(this.treatmentTotal / this.selectedInstallmentMonths);
+    return Math.round(this.remainingBalance / this.selectedInstallmentMonths);
+  }
+
+  get remainingBalance() {
+    return Math.max(this.treatmentTotal - this.treatmentPrepaymentAmount, 0);
+  }
+
+  get totalChequeAmount() {
+    return this.treatmentCheques.reduce((sum, cheque) => sum + (cheque.amount ?? 0), 0);
   }
 
   getPersianNumber(value: number) {
@@ -509,6 +518,45 @@ export class ClientsComponent implements OnInit {
     this.persistTreatmentPlan();
   }
 
+  updatePrepaymentAmount(value: number) {
+    const numericValue = Number(value);
+    this.treatmentPrepaymentAmount = Number.isFinite(numericValue) ? Math.max(0, numericValue) : 0;
+    this.persistTreatmentPlan();
+  }
+
+  updateChequeAmount(value: number) {
+    const numericValue = Number(value);
+    this.newChequeAmount = Number.isFinite(numericValue) ? Math.max(0, numericValue) : 0;
+  }
+
+  addCheque() {
+    const trimmedNumber = this.newChequeNumber.trim();
+    const trimmedOwner = this.newChequeOwner.trim();
+    if (!this.newChequeDate && !trimmedNumber && !trimmedOwner && !this.newChequeAmount) {
+      return;
+    }
+    this.treatmentCheques = [
+      ...this.treatmentCheques,
+      {
+        id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
+        date: this.newChequeDate,
+        amount: this.newChequeAmount,
+        number: trimmedNumber,
+        owner: trimmedOwner
+      }
+    ];
+    this.newChequeDate = '';
+    this.newChequeAmount = 0;
+    this.newChequeNumber = '';
+    this.newChequeOwner = '';
+    this.persistTreatmentPlan();
+  }
+
+  removeCheque(chequeId: string) {
+    this.treatmentCheques = this.treatmentCheques.filter((cheque) => cheque.id !== chequeId);
+    this.persistTreatmentPlan();
+  }
+
   private addDays(date: Date, amount: number) {
     const updated = new Date(date);
     updated.setDate(updated.getDate() + amount);
@@ -546,10 +594,11 @@ export class ClientsComponent implements OnInit {
     this.selectedTeethIds = [];
     this.treatmentPlanNote = '';
     this.treatmentPrepaymentAmount = 0;
-    this.treatmentChequeDate = '';
-    this.treatmentChequeAmount = 0;
-    this.treatmentChequeNumber = '';
-    this.treatmentChequeOwner = '';
+    this.treatmentCheques = [];
+    this.newChequeDate = '';
+    this.newChequeAmount = 0;
+    this.newChequeNumber = '';
+    this.newChequeOwner = '';
     this.treatmentToothServices = {};
     this.selectedInstallmentMonths = 6;
   }
@@ -605,10 +654,21 @@ export class ClientsComponent implements OnInit {
         this.selectedTeethIds = parsed.selectedTeethIds ?? [];
         this.treatmentPlanNote = parsed.note ?? '';
         this.treatmentPrepaymentAmount = parsed.prepaymentAmount ?? 0;
-        this.treatmentChequeDate = parsed.chequeDate ?? '';
-        this.treatmentChequeAmount = parsed.chequeAmount ?? 0;
-        this.treatmentChequeNumber = parsed.chequeNumber ?? '';
-        this.treatmentChequeOwner = parsed.chequeOwner ?? '';
+        if (parsed.cheques?.length) {
+          this.treatmentCheques = parsed.cheques;
+        } else if (parsed.chequeDate || parsed.chequeNumber || parsed.chequeOwner || parsed.chequeAmount) {
+          this.treatmentCheques = [
+            {
+              id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
+              date: parsed.chequeDate ?? '',
+              amount: parsed.chequeAmount ?? 0,
+              number: parsed.chequeNumber ?? '',
+              owner: parsed.chequeOwner ?? ''
+            }
+          ];
+        } else {
+          this.treatmentCheques = [];
+        }
         this.treatmentToothServices = parsed.toothServices ?? {};
         this.selectedInstallmentMonths = parsed.installmentMonths ?? 6;
         this.cleanupTreatmentServices();
@@ -626,10 +686,7 @@ export class ClientsComponent implements OnInit {
       selectedTeethIds: this.selectedTeethIds,
       note: this.treatmentPlanNote,
       prepaymentAmount: this.treatmentPrepaymentAmount,
-      chequeDate: this.treatmentChequeDate,
-      chequeAmount: this.treatmentChequeAmount,
-      chequeNumber: this.treatmentChequeNumber,
-      chequeOwner: this.treatmentChequeOwner,
+      cheques: this.treatmentCheques,
       toothServices: this.treatmentToothServices,
       installmentMonths: this.selectedInstallmentMonths
     };
@@ -809,12 +866,21 @@ interface TreatmentPlanStorage {
   selectedTeethIds: string[];
   note: string;
   prepaymentAmount: number;
-  chequeDate: string;
-  chequeAmount: number;
-  chequeNumber: string;
-  chequeOwner: string;
+  cheques: TreatmentCheque[];
+  chequeDate?: string;
+  chequeAmount?: number;
+  chequeNumber?: string;
+  chequeOwner?: string;
   toothServices: Record<string, TreatmentToothService>;
   installmentMonths: number;
+}
+
+interface TreatmentCheque {
+  id: string;
+  date: string;
+  amount: number;
+  number: string;
+  owner: string;
 }
 
 interface TreatmentServiceOption {

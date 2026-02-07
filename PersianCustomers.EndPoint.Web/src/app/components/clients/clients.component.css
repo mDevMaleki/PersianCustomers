@@ -524,6 +524,10 @@
   gap: 0.6rem;
 }
 
+.treatment-checks .add-check {
+  justify-self: start;
+}
+
 .treatment-checks h5 {
   margin: 0;
   font-size: 0.95rem;
@@ -540,6 +544,55 @@
   display: grid;
   gap: 0.4rem;
   font-weight: 600;
+}
+
+.checks-list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.check-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.check-item strong {
+  color: #1e293b;
+}
+
+.check-item .muted {
+  margin: 0.2rem 0 0;
+}
+
+.treatment-plan-card {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+  border: 1px solid #dbeafe;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.treatment-plan-card h5 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+.plan-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  font-weight: 600;
+  color: #1f2937;
 }
 
 .summary-row {
