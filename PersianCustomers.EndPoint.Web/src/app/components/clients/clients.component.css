@@ -9,6 +9,44 @@
   margin-bottom: 1.5rem;
 }
 
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 1000;
+}
+
+.modal-card {
+  background: #fff;
+  border-radius: 16px;
+  width: min(920px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.close-button {
+  border: 1px solid #cbd5f5;
+  background: transparent;
+  color: #3455ff;
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
 .client-form {
   margin-top: 1rem;
   display: grid;
