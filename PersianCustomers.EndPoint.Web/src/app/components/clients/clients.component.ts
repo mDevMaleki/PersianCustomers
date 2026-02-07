@@ -31,8 +31,8 @@ export class ClientsComponent implements OnInit {
   modalIsLoadingCalls = false;
   modalTasks: ClientTask[] = [];
   modalAppointments: ClientAppointment[] = [];
-  treatmentUpperTeeth: ToothPosition[] = this.createTeethRow('upper', 70);
-  treatmentLowerTeeth: ToothPosition[] = this.createTeethRow('lower', 140);
+  treatmentUpperTeeth: ToothPosition[] = this.createTeethRow('upper', 112);
+  treatmentLowerTeeth: ToothPosition[] = this.createTeethRow('lower', 204);
   selectedTeethIds: string[] = [];
   treatmentPlanNote = '';
   treatmentPrepaymentAmount = 0;
@@ -771,8 +771,8 @@ export class ClientsComponent implements OnInit {
 
   private createTeethRow(arch: ToothArch, y: number): ToothPosition[] {
     const labels = [8, 7, 6, 5, 4, 3, 2, 1, 1, 2, 3, 4, 5, 6, 7, 8];
-    const startX = 36;
-    const step = 28;
+    const startX = 130;
+    const step = 30;
     return labels.map((label, index) => ({
       id: `${arch}-${index + 1}`,
       label,
