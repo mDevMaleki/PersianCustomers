@@ -19,7 +19,26 @@
   padding: 1.5rem;
   z-index: 1000;
 }
-
+.tpt__tooth-svg-number[data-v-5fa3668e] {
+  cursor: pointer;
+  transition: all .4s;
+  color: #31ccec;
+  fill: currentColor;
+  stroke-width: 2;
+}
+.tpt__tooth-svg--active[data-v-5fa3668e] {
+  color: #bbdefb;
+  stroke: #fff;
+}
+.tpt__tooth-svg[data-v-5fa3668e] {
+  cursor: pointer;
+  transition: all .4s;
+  color: #fff;
+  fill: currentColor;
+  stroke-width: 2;
+  stroke: #fff;
+  z-index: 999;
+}
 .modal-card {
   background: #fff;
   border-radius: 16px;
