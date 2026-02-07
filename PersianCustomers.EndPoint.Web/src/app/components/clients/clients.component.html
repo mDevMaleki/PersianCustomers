@@ -103,42 +103,44 @@
 
   <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-  <div class="clients-grid" *ngIf="clients.length">
-    <article
-      class="client-card"
-      *ngFor="let client of clients"
-      [class.active]="client === selectedClient"
-    >
-      <h3>{{ client.firstName }} {{ client.lastName }}</h3>
-      <p class="muted">{{ client.title || 'بدون عنوان' }}</p>
-      <dl>
-        <div>
-          <dt>شماره موبایل ۱</dt>
-          <dd>{{ client.mobileNumber1 || '---' }}</dd>
-        </div>
-        <div>
-          <dt>شماره موبایل ۲</dt>
-          <dd>{{ client.mobileNumber2 || '---' }}</dd>
-        </div>
-        <div>
-          <dt>تلفن ثابت</dt>
-          <dd>{{ client.phoneNumber || '---' }}</dd>
-        </div>
-        <div>
-          <dt>ایمیل</dt>
-          <dd>{{ client.email || '---' }}</dd>
-        </div>
-      </dl>
-      <div class="actions">
-        <button (click)="selectClient(client, client.mobileNumber1)">تماس‌های موبایل ۱</button>
-        <button class="outline" (click)="selectClient(client, client.mobileNumber2)">تماس‌های موبایل ۲</button>
-        <button class="outline" (click)="selectClient(client, client.phoneNumber)">تماس‌های تلفن ثابت</button>
-      </div>
-      <div class="management-actions">
-        <button class="outline" (click)="startEditClient(client)">ویرایش</button>
-        <button class="danger" (click)="deleteClient(client)">حذف</button>
-      </div>
-    </article>
+  <div class="table-wrapper" *ngIf="clients.length">
+    <table class="clients-table">
+      <thead>
+        <tr>
+          <th>نام و نام خانوادگی</th>
+          <th>عنوان</th>
+          <th>موبایل ۱</th>
+          <th>موبایل ۲</th>
+          <th>تلفن ثابت</th>
+          <th>ایمیل</th>
+          <th>تماس‌ها</th>
+          <th>مدیریت</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let client of clients" [class.active]="client === selectedClient">
+          <td>{{ client.firstName }} {{ client.lastName }}</td>
+          <td>{{ client.title || 'بدون عنوان' }}</td>
+          <td>{{ client.mobileNumber1 || '---' }}</td>
+          <td>{{ client.mobileNumber2 || '---' }}</td>
+          <td>{{ client.phoneNumber || '---' }}</td>
+          <td>{{ client.email || '---' }}</td>
+          <td>
+            <div class="table-actions">
+              <button (click)="selectClient(client, client.mobileNumber1)">موبایل ۱</button>
+              <button class="outline" (click)="selectClient(client, client.mobileNumber2)">موبایل ۲</button>
+              <button class="outline" (click)="selectClient(client, client.phoneNumber)">تلفن ثابت</button>
+            </div>
+          </td>
+          <td>
+            <div class="table-actions">
+              <button class="outline" (click)="startEditClient(client)">ویرایش</button>
+              <button class="danger" (click)="deleteClient(client)">حذف</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <p class="muted" *ngIf="!clients.length && !isLoadingClients">مشتری‌ای برای نمایش وجود ندارد.</p>

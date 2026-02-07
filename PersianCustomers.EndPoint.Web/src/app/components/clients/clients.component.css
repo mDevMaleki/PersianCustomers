@@ -62,83 +62,58 @@
   border: 1px solid #3455ff;
 }
 
-.clients-grid {
-  display: grid;
-  gap: 1rem;
+.table-wrapper {
   margin-top: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  overflow-x: auto;
 }
 
-.client-card {
-  border: 1px solid #e2e2e2;
-  border-radius: 12px;
-  padding: 1rem;
-  background: #fff;
-  display: grid;
-  gap: 0.8rem;
+.clients-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
 }
 
-.client-card.active {
-  border-color: #3455ff;
-  box-shadow: 0 0 0 2px rgba(52, 85, 255, 0.2);
+.clients-table th,
+.clients-table td {
+  border-bottom: 1px solid #e2e2e2;
+  padding: 0.75rem;
+  text-align: right;
+  font-size: 0.9rem;
+  vertical-align: top;
 }
 
-.client-card dl {
-  display: grid;
-  gap: 0.6rem;
+.clients-table th {
+  background: #f7f7f7;
+  font-weight: 700;
 }
 
-.client-card dt {
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: #6b6b6b;
+.clients-table tr.active {
+  background: rgba(52, 85, 255, 0.08);
 }
 
-.client-card dd {
-  margin: 0;
-  font-weight: 500;
+.table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
-.actions {
-  display: grid;
-  gap: 0.5rem;
-}
-
-.actions button {
+.table-actions button {
   border-radius: 8px;
   border: none;
-  padding: 0.5rem 0.7rem;
+  padding: 0.45rem 0.7rem;
   background: #3455ff;
   color: #fff;
   cursor: pointer;
+  font-size: 0.8rem;
 }
 
-.actions .outline {
+.table-actions .outline {
   background: transparent;
   color: #3455ff;
   border: 1px solid #3455ff;
 }
 
-.management-actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.management-actions button {
-  border-radius: 8px;
-  padding: 0.45rem 0.7rem;
-  border: none;
-  cursor: pointer;
-}
-
-.management-actions .outline {
-  background: transparent;
-  color: #3455ff;
-  border: 1px solid #3455ff;
-}
-
-.management-actions .danger {
+.table-actions .danger {
   background: #ff4d4f;
   color: #fff;
 }
