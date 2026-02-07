@@ -47,7 +47,13 @@
 
       <label>
         تاریخ تولد
-        <input type="date" name="birthDate" [(ngModel)]="model.birthDate" />
+        <input
+          type="text"
+          name="birthDate"
+          placeholder="مثال: 1403/01/01"
+          [(ngModel)]="birthDateInput"
+          (blur)="normalizeBirthDateInput()"
+        />
       </label>
 
       <label class="full">
