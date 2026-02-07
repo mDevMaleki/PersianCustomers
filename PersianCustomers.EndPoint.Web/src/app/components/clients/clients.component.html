@@ -39,6 +39,13 @@
       >
         تماس‌ها
       </button>
+      <button
+        type="button"
+        [class.active]="modalActiveTab === 'tasks'"
+        (click)="setModalTab('tasks')"
+      >
+        پیگیری‌ها
+      </button>
     </div>
 
     <p class="error" *ngIf="formErrorMessage">{{ formErrorMessage }}</p>
@@ -205,6 +212,82 @@
       <p class="muted" *ngIf="!modalCallRecords.length && !modalIsLoadingCalls">
         تماسی برای نمایش وجود ندارد.
       </p>
+    </ng-container>
+
+    <ng-container *ngIf="modalActiveTab === 'tasks'">
+      <div class="tasks-header">
+        <div>
+          <p class="muted">برای هر مشتری پیگیری ثبت کنید تا در تاریخ و ساعت مشخص یادآوری شود.</p>
+          <p class="muted" *ngIf="!formData.id">برای ثبت پیگیری ابتدا باید مشتری ذخیره شود.</p>
+        </div>
+      </div>
+
+      <div class="task-form">
+        <label>
+          تاریخ
+          <input type="date" name="taskDate" [(ngModel)]="taskForm.date" />
+        </label>
+        <label>
+          ساعت
+          <input type="time" name="taskTime" [(ngModel)]="taskForm.time" />
+        </label>
+        <label class="full">
+          موضوع پیگیری
+          <input type="text" name="taskSubject" [(ngModel)]="taskForm.subject" />
+        </label>
+        <label class="full">
+          توضیحات تکمیلی
+          <textarea name="taskDescription" rows="3" [(ngModel)]="taskForm.description"></textarea>
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" (click)="addTask()" [disabled]="!canAddTask()">
+          ثبت پیگیری
+        </button>
+        <button type="button" class="outline" (click)="resetTaskForm()">
+          پاک کردن
+        </button>
+      </div>
+
+      <p class="error" *ngIf="taskErrorMessage">{{ taskErrorMessage }}</p>
+      <p class="success" *ngIf="taskSuccessMessage">{{ taskSuccessMessage }}</p>
+
+      <div class="tasks-table" *ngIf="modalTasks.length">
+        <table>
+          <thead>
+            <tr>
+              <th>تاریخ و ساعت</th>
+              <th>موضوع</th>
+              <th>توضیحات</th>
+              <th>وضعیت</th>
+              <th>مدیریت</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let task of modalTasks">
+              <td>{{ task.date }} - {{ task.time }}</td>
+              <td>{{ task.subject }}</td>
+              <td>{{ task.description || '---' }}</td>
+              <td>
+                <span class="status-pill" [class.done]="task.isDone">
+                  {{ task.isDone ? 'انجام شد' : 'در انتظار' }}
+                </span>
+              </td>
+              <td>
+                <div class="table-actions">
+                  <button type="button" class="outline" (click)="toggleTaskDone(task)">
+                    {{ task.isDone ? 'بازگشت' : 'انجام شد' }}
+                  </button>
+                  <button type="button" class="danger" (click)="deleteTask(task)">حذف</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="muted" *ngIf="!modalTasks.length">پیگیری ثبت نشده است.</p>
     </ng-container>
   </div>
 </div>

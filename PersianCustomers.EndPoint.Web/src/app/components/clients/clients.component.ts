@@ -23,12 +23,16 @@ export class ClientsComponent implements OnInit {
   isSubmitting = false;
   isEditMode = false;
   isFormModalOpen = false;
-  modalActiveTab: 'details' | 'calls' = 'details';
+  modalActiveTab: 'details' | 'calls' | 'tasks' = 'details';
   modalCallRecords: CallRecordDto[] = [];
   modalCallRecordsResult: PaginatedResult<CallRecordDto> | null = null;
   modalSelectedPhone = '';
   modalCallsErrorMessage = '';
   modalIsLoadingCalls = false;
+  modalTasks: ClientTask[] = [];
+  taskForm: TaskFormState = this.getEmptyTaskForm();
+  taskErrorMessage = '';
+  taskSuccessMessage = '';
   startDate = this.formatDate(this.addDays(new Date(), -7));
   endDate = this.formatDate(new Date());
   formData: ClientDto = this.getEmptyForm();
@@ -81,6 +85,7 @@ export class ClientsComponent implements OnInit {
     this.formErrorMessage = '';
     this.formSuccessMessage = '';
     this.resetModalCalls();
+    this.resetModalTasks();
     this.isFormModalOpen = true;
   }
 
@@ -90,6 +95,7 @@ export class ClientsComponent implements OnInit {
     this.formErrorMessage = '';
     this.formSuccessMessage = '';
     this.resetModalCalls();
+    this.loadTasksForClient(client.id);
     this.isFormModalOpen = true;
   }
 
@@ -100,6 +106,7 @@ export class ClientsComponent implements OnInit {
     this.isFormModalOpen = false;
     this.formErrorMessage = '';
     this.resetModalCalls();
+    this.resetModalTasks();
   }
 
   submitClient() {
@@ -214,7 +221,7 @@ export class ClientsComponent implements OnInit {
     });
   }
 
-  setModalTab(tab: 'details' | 'calls') {
+  setModalTab(tab: 'details' | 'calls' | 'tasks') {
     this.modalActiveTab = tab;
     if (tab === 'calls') {
       this.prepareModalCalls();
@@ -268,6 +275,61 @@ export class ClientsComponent implements OnInit {
     return `http://193.151.152.32:5050/api/Recordings/stream/${normalized}`;
   }
 
+  addTask() {
+    this.taskErrorMessage = '';
+    this.taskSuccessMessage = '';
+
+    if (!this.formData.id) {
+      this.taskErrorMessage = 'برای ثبت پیگیری ابتدا باید مشتری ذخیره شود.';
+      return;
+    }
+
+    if (!this.taskForm.date || !this.taskForm.time || !this.taskForm.subject) {
+      this.taskErrorMessage = 'تاریخ، ساعت و موضوع پیگیری را وارد کنید.';
+      return;
+    }
+
+    const task: ClientTask = {
+      id: this.generateTaskId(),
+      date: this.taskForm.date,
+      time: this.taskForm.time,
+      subject: this.taskForm.subject,
+      description: this.taskForm.description,
+      isDone: false,
+      createdAt: new Date().toISOString()
+    };
+
+    this.modalTasks = [task, ...this.modalTasks];
+    this.sortModalTasks();
+    this.saveTasksToStorage(this.formData.id, this.modalTasks);
+    this.taskForm = this.getEmptyTaskForm();
+    this.taskSuccessMessage = 'پیگیری با موفقیت ثبت شد.';
+  }
+
+  resetTaskForm() {
+    this.taskForm = this.getEmptyTaskForm();
+    this.taskErrorMessage = '';
+    this.taskSuccessMessage = '';
+  }
+
+  toggleTaskDone(task: ClientTask) {
+    task.isDone = !task.isDone;
+    if (this.formData.id) {
+      this.saveTasksToStorage(this.formData.id, this.modalTasks);
+    }
+  }
+
+  deleteTask(task: ClientTask) {
+    this.modalTasks = this.modalTasks.filter((item) => item.id !== task.id);
+    if (this.formData.id) {
+      this.saveTasksToStorage(this.formData.id, this.modalTasks);
+    }
+  }
+
+  canAddTask() {
+    return !!this.formData.id && !!this.taskForm.date && !!this.taskForm.time && !!this.taskForm.subject;
+  }
+
   private addDays(date: Date, amount: number) {
     const updated = new Date(date);
     updated.setDate(updated.getDate() + amount);
@@ -285,6 +347,57 @@ export class ClientsComponent implements OnInit {
     this.modalSelectedPhone = '';
     this.modalCallsErrorMessage = '';
     this.modalIsLoadingCalls = false;
+  }
+
+  private resetModalTasks() {
+    this.modalTasks = [];
+    this.taskForm = this.getEmptyTaskForm();
+    this.taskErrorMessage = '';
+    this.taskSuccessMessage = '';
+  }
+
+  private loadTasksForClient(clientId?: number) {
+    if (!clientId) {
+      this.resetModalTasks();
+      return;
+    }
+
+    try {
+      const stored = localStorage.getItem(this.getTaskStorageKey(clientId));
+      this.modalTasks = stored ? (JSON.parse(stored) as ClientTask[]) : [];
+    } catch {
+      this.modalTasks = [];
+    }
+    this.sortModalTasks();
+  }
+
+  private saveTasksToStorage(clientId: number, tasks: ClientTask[]) {
+    localStorage.setItem(this.getTaskStorageKey(clientId), JSON.stringify(tasks));
+  }
+
+  private sortModalTasks() {
+    this.modalTasks = [...this.modalTasks].sort((a, b) => {
+      const dateA = new Date(`${a.date}T${a.time || '00:00'}`).getTime();
+      const dateB = new Date(`${b.date}T${b.time || '00:00'}`).getTime();
+      return dateA - dateB;
+    });
+  }
+
+  private getTaskStorageKey(clientId: number) {
+    return `client_tasks_${clientId}`;
+  }
+
+  private getEmptyTaskForm(): TaskFormState {
+    return {
+      date: '',
+      time: '',
+      subject: '',
+      description: ''
+    };
+  }
+
+  private generateTaskId() {
+    return `${Date.now()}_${Math.random().toString(16).slice(2)}`;
   }
 
   private prepareModalCalls() {
@@ -305,4 +418,21 @@ export class ClientsComponent implements OnInit {
       mobileNumber1: ''
     };
   }
+}
+
+interface ClientTask {
+  id: string;
+  date: string;
+  time: string;
+  subject: string;
+  description: string;
+  isDone: boolean;
+  createdAt: string;
+}
+
+interface TaskFormState {
+  date: string;
+  time: string;
+  subject: string;
+  description: string;
 }
