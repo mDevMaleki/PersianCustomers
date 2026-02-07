@@ -415,12 +415,15 @@
 
       <div class="treatment-content">
         <div class="treatment-diagram">
-          <svg class="teeth-diagram" viewBox="0 0 520 220" aria-label="نقشه دندان‌ها">
+          <svg class="teeth-diagram" viewBox="0 0 757 335" aria-label="نقشه دندان‌ها">
             <path
               class="mouth-shape"
-              d="M40 40 C120 10 400 10 480 40 C500 55 510 90 500 120 C470 170 340 195 260 195 C180 195 50 170 20 120 C10 90 20 55 40 40 Z"
+              d="M378 327.906C378 327.906 378.46 326.641 322.934 327.906C267.408 329.171 206.093 304.434 179.76 280.92C153.427 257.406 111.967 185.863 90.653 138.961C69.339 92.059 22.7 35.51 18.566 29.993C14.432 24.476 15.426 18.623 20.566 19.993C25.706 21.363 56.316 32.993 84.643 32.993C112.97 32.993 128.933 7 238.831 7C336.283 7 367.993 35.992 367.993 35.992C367.993 35.992 379.781 43.318 389.225 35.992C389.225 35.994 427.954 7 518.3 7C628.135 7 644.086 32.995 672.4 32.995C700.714 32.995 731.3 21.37 736.439 19.995C741.578 18.62 742.575 24.476 738.439 29.995C734.303 35.514 687.697 92.067 666.395 138.974C645.093 185.881 603.659 257.431 577.342 280.947C551.025 304.463 489.748 329.203 434.255 327.937C378.762 326.671 379.222 327.937 379.222 327.937C378.82 328.046 378.396 328.036 378 327.906V327.906Z"
             ></path>
-            <path class="gum-shape" d="M70 70 C150 50 370 50 450 70 C460 95 455 120 445 130 C380 160 140 160 75 130 C65 120 60 95 70 70 Z"></path>
+            <path
+              class="gum-shape"
+              d="M378.247 302.863C378.247 302.863 378.681 301.795 326.339 302.863C273.997 303.931 216.2 283.051 191.379 263.2C166.558 243.349 127.479 182.966 107.379 143.377C87.279 103.788 43.331 56.06 39.431 51.4C35.531 46.74 36.471 41.8 41.319 42.962C46.167 44.124 75.019 53.932 101.719 53.932C128.419 53.932 143.468 32 247.062 32C338.923 32 368.815 56.471 368.815 56.471C368.815 56.471 379.926 62.655 388.829 56.471C388.829 56.471 425.336 31.998 510.502 31.998C614.034 32 629.07 53.937 655.756 53.937C682.442 53.937 711.277 44.125 716.122 42.966C720.967 41.807 721.906 46.748 718.008 51.405C714.11 56.062 670.177 103.8 650.1 143.391C630.023 182.982 590.963 243.377 566.155 263.226C541.347 283.075 483.586 303.958 431.276 302.89C378.966 301.822 379.4 302.89 379.4 302.89C379.02 302.982 378.622 302.973 378.247 302.863Z"
+            ></path>
             <ng-container *ngFor="let tooth of treatmentUpperTeeth">
               <g
                 class="tooth"
@@ -431,8 +434,8 @@
                 (keydown.enter)="toggleTooth(tooth)"
                 (keydown.space)="toggleTooth(tooth)"
               >
-                <rect class="tooth-shape" [attr.x]="tooth.x" [attr.y]="tooth.y" width="22" height="26" rx="6"></rect>
-                <text class="tooth-label" [attr.x]="tooth.x + 11" [attr.y]="tooth.y + 17">
+                <rect class="tooth-shape" [attr.x]="tooth.x" [attr.y]="tooth.y" width="26" height="32" rx="10"></rect>
+                <text class="tooth-label" [attr.x]="tooth.x + 13" [attr.y]="tooth.y + 18">
                   {{ getPersianNumber(tooth.label) }}
                 </text>
               </g>
@@ -447,8 +450,8 @@
                 (keydown.enter)="toggleTooth(tooth)"
                 (keydown.space)="toggleTooth(tooth)"
               >
-                <rect class="tooth-shape" [attr.x]="tooth.x" [attr.y]="tooth.y" width="22" height="26" rx="6"></rect>
-                <text class="tooth-label" [attr.x]="tooth.x + 11" [attr.y]="tooth.y + 17">
+                <rect class="tooth-shape" [attr.x]="tooth.x" [attr.y]="tooth.y" width="26" height="32" rx="10"></rect>
+                <text class="tooth-label" [attr.x]="tooth.x + 13" [attr.y]="tooth.y + 18">
                   {{ getPersianNumber(tooth.label) }}
                 </text>
               </g>
