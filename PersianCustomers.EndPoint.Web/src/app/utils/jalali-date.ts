@@ -16,11 +16,24 @@ const JALALI_BREAKS = [
 ];
 
 const DATE_SEPARATOR = /[\/\-.]/;
+const PERSIAN_DIGITS = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+const ARABIC_DIGITS = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
 
 const div = (a: number, b: number) => Math.floor(a / b);
 const mod = (a: number, b: number) => a - Math.floor(a / b) * b;
 
 const pad = (value: number, length = 2) => value.toString().padStart(length, '0');
+
+const normalizeDigits = (value: string) => {
+  let normalized = value;
+  PERSIAN_DIGITS.forEach((digit, index) => {
+    normalized = normalized.replaceAll(digit, index.toString());
+  });
+  ARABIC_DIGITS.forEach((digit, index) => {
+    normalized = normalized.replaceAll(digit, index.toString());
+  });
+  return normalized;
+};
 
 const jalCal = (jy: number) => {
   const breaks = JALALI_BREAKS;
@@ -151,7 +164,7 @@ export const parseJalaliDate = (value?: string | null): JalaliDateParts | null =
   if (!value) {
     return null;
   }
-  const trimmed = value.trim();
+  const trimmed = normalizeDigits(value.trim());
   if (!trimmed) {
     return null;
   }
@@ -170,7 +183,7 @@ export const normalizeJalaliInput = (value?: string | null) => {
   if (!value) {
     return '';
   }
-  const trimmed = value.trim();
+  const trimmed = normalizeDigits(value.trim());
   if (!trimmed) {
     return '';
   }
@@ -179,6 +192,17 @@ export const normalizeJalaliInput = (value?: string | null) => {
     return trimmed;
   }
   return `${pad(parsed.jy, 4)}/${pad(parsed.jm)}/${pad(parsed.jd)}`;
+};
+
+export const normalizeTimeInput = (value?: string | null) => {
+  if (!value) {
+    return '';
+  }
+  const trimmed = normalizeDigits(value.trim());
+  if (!trimmed) {
+    return '';
+  }
+  return trimmed;
 };
 
 export const toGregorianDateString = (jalaliInput?: string | null) => {
@@ -192,4 +216,3 @@ export const toGregorianDateString = (jalaliInput?: string | null) => {
   const { gy, gm, gd } = d2g(j2d(parsed.jy, parsed.jm, parsed.jd));
   return `${pad(gy, 4)}-${pad(gm)}-${pad(gd)}`;
 };
-

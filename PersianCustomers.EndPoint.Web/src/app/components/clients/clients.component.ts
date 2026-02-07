@@ -4,6 +4,7 @@ import { BaseResponse, CallRecordDto, ClientDto, PaginatedResult } from '../../m
 import {
   formatJalaliDateTime,
   normalizeJalaliInput,
+  normalizeTimeInput,
   toGregorianDateString,
   toJalaliDateString
 } from '../../utils/jalali-date';
@@ -469,6 +470,7 @@ export class ClientsComponent implements OnInit {
   addTask() {
     this.taskErrorMessage = '';
     this.taskSuccessMessage = '';
+    this.taskForm.time = normalizeTimeInput(this.taskForm.time);
 
     if (!this.formData.id) {
       this.taskErrorMessage = 'برای ثبت پیگیری ابتدا باید مشتری ذخیره شود.';
@@ -506,6 +508,7 @@ export class ClientsComponent implements OnInit {
   addAppointment() {
     this.appointmentErrorMessage = '';
     this.appointmentSuccessMessage = '';
+    this.appointmentForm.time = normalizeTimeInput(this.appointmentForm.time);
 
     if (!this.formData.id) {
       this.appointmentErrorMessage = 'برای ثبت نوبت ابتدا باید مشتری ذخیره شود.';
@@ -654,6 +657,10 @@ export class ClientsComponent implements OnInit {
 
   normalizeDateInput(value?: string | null) {
     return normalizeJalaliInput(value);
+  }
+
+  normalizeTimeInput(value?: string | null) {
+    return normalizeTimeInput(value);
   }
 
   formatPrice(value: number) {
@@ -976,7 +983,8 @@ export class ClientsComponent implements OnInit {
     if (!gregorianDate) {
       return 0;
     }
-    const timestamp = new Date(`${gregorianDate}T${time || '00:00'}`).getTime();
+    const normalizedTime = normalizeTimeInput(time);
+    const timestamp = new Date(`${gregorianDate}T${normalizedTime || '00:00'}`).getTime();
     return Number.isNaN(timestamp) ? 0 : timestamp;
   }
 
