@@ -468,6 +468,55 @@
             <p class="muted">هنوز دندانی انتخاب نشده است.</p>
           </ng-template>
 
+          <div class="treatment-services">
+            <h5>خدمات هر دندان</h5>
+            <div *ngIf="selectedTreatmentTeeth.length; else noServices">
+              <div class="service-row" *ngFor="let tooth of selectedTreatmentTeeth">
+                <span class="service-tooth">{{ tooth.archLabel }} {{ getPersianNumber(tooth.label) }}</span>
+                <select
+                  [ngModel]="getToothService(tooth.id).serviceValue"
+                  (ngModelChange)="updateToothService(tooth.id, $event)"
+                >
+                  <option *ngFor="let service of treatmentServiceOptions" [ngValue]="service.value">
+                    {{ service.label }}
+                  </option>
+                </select>
+                <input
+                  type="number"
+                  min="0"
+                  [ngModel]="getToothService(tooth.id).price"
+                  (ngModelChange)="updateToothPrice(tooth.id, $event)"
+                  placeholder="قیمت (تومان)"
+                />
+              </div>
+            </div>
+            <ng-template #noServices>
+              <p class="muted">برای ثبت خدمات ابتدا دندان انتخاب کنید.</p>
+            </ng-template>
+          </div>
+
+          <div class="treatment-summary">
+            <div class="summary-row">
+              <span>جمع کل طرح درمان</span>
+              <strong>{{ formatPrice(treatmentTotal) }} تومان</strong>
+            </div>
+            <label>
+              طرح اقساطی
+              <select
+                [ngModel]="selectedInstallmentMonths"
+                (ngModelChange)="updateInstallmentPlan($event)"
+              >
+                <option *ngFor="let plan of installmentPlanOptions" [ngValue]="plan.months">
+                  {{ plan.label }}
+                </option>
+              </select>
+            </label>
+            <div class="summary-row">
+              <span>مبلغ هر قسط</span>
+              <strong>{{ formatPrice(installmentMonthlyPayment) }} تومان</strong>
+            </div>
+          </div>
+
           <label class="treatment-notes">
             توضیحات طرح درمان
             <textarea
