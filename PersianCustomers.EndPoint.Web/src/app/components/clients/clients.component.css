@@ -399,12 +399,12 @@
 .treatment-content {
   display: flex;
   gap: 1.5rem;
-  flex-wrap: wrap;
+  flex-direction: column;
   margin-top: 1rem;
 }
 
 .treatment-diagram {
-  flex: 1 1 320px;
+  flex: 0 0 auto;
   display: grid;
   gap: 0.6rem;
   justify-items: center;
@@ -454,7 +454,7 @@
 }
 
 .treatment-details {
-  flex: 1 1 280px;
+  flex: 1 1 auto;
   display: grid;
   gap: 1rem;
 }
