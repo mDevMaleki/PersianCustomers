@@ -467,7 +467,10 @@ export class ClientsComponent implements OnInit {
   }
 
   get remainingBalance() {
-    return Math.max(this.treatmentTotal - this.treatmentPrepaymentAmount, 0);
+    return Math.max(
+      this.treatmentTotal - this.treatmentPrepaymentAmount - this.totalChequeAmount,
+      0
+    );
   }
 
   get totalChequeAmount() {
