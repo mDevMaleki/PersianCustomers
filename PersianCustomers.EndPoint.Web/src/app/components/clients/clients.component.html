@@ -407,8 +407,21 @@
      (click)="toggleTooth(tooth)"
      (keydown.enter)="toggleTooth(tooth)"
      (keydown.space)="$event.preventDefault(); toggleTooth(tooth)">
-    <circle class="tooth-shape" [attr.cx]="tooth.x" [attr.cy]="tooth.y" r="12"></circle>
-    <text class="tooth-label" [attr.x]="tooth.x" [attr.y]="tooth.y">{{ getPersianNumber(tooth.label) }}</text>
+    <ng-container *ngIf="getToothPath(tooth.id); else upperToothFallback">
+      <path class="tooth-shape"
+            [attr.d]="getToothPath(tooth.id)"
+            [attr.fill]="getToothFill(tooth.id)"
+            [attr.stroke]="getToothStroke(tooth.id)"></path>
+    </ng-container>
+    <ng-template #upperToothFallback>
+      <circle class="tooth-shape"
+              [attr.cx]="tooth.x"
+              [attr.cy]="tooth.y"
+              r="12"
+              [attr.fill]="getToothFill(tooth.id)"
+              [attr.stroke]="getToothStroke(tooth.id)"></circle>
+      <text class="tooth-label" [attr.x]="tooth.x" [attr.y]="tooth.y">{{ getPersianNumber(tooth.label) }}</text>
+    </ng-template>
   </g>
   <g *ngFor="let tooth of treatmentLowerTeeth"
      class="tooth"
@@ -420,8 +433,21 @@
      (click)="toggleTooth(tooth)"
      (keydown.enter)="toggleTooth(tooth)"
      (keydown.space)="$event.preventDefault(); toggleTooth(tooth)">
-    <circle class="tooth-shape" [attr.cx]="tooth.x" [attr.cy]="tooth.y" r="12"></circle>
-    <text class="tooth-label" [attr.x]="tooth.x" [attr.y]="tooth.y">{{ getPersianNumber(tooth.label) }}</text>
+    <ng-container *ngIf="getToothPath(tooth.id); else lowerToothFallback">
+      <path class="tooth-shape"
+            [attr.d]="getToothPath(tooth.id)"
+            [attr.fill]="getToothFill(tooth.id)"
+            [attr.stroke]="getToothStroke(tooth.id)"></path>
+    </ng-container>
+    <ng-template #lowerToothFallback>
+      <circle class="tooth-shape"
+              [attr.cx]="tooth.x"
+              [attr.cy]="tooth.y"
+              r="12"
+              [attr.fill]="getToothFill(tooth.id)"
+              [attr.stroke]="getToothStroke(tooth.id)"></circle>
+      <text class="tooth-label" [attr.x]="tooth.x" [attr.y]="tooth.y">{{ getPersianNumber(tooth.label) }}</text>
+    </ng-template>
   </g>
 </g>
 </svg>
