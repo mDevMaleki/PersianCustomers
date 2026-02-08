@@ -13,7 +13,15 @@ import {
 } from '../../utils/jalali-date';
 
 type ToothArch = 'upper' | 'lower';
-type DatePickerTarget = 'task' | 'appointment' | 'cheque';
+type DatePickerTarget =
+  | 'task'
+  | 'appointment'
+  | 'cheque'
+  | 'birthDay'
+  | 'callStart'
+  | 'callEnd'
+  | 'modalCallStart'
+  | 'modalCallEnd';
 
 export interface ToothClickPayload {
   id: string;
@@ -737,6 +745,15 @@ export class ClientsComponent implements OnInit {
     if (this.activeDatePicker === 'cheque') {
       this.newChequeDate = normalized;
     }
+    if (this.activeDatePicker === 'birthDay') {
+      this.formData.birthDay = normalized;
+    }
+    if (this.activeDatePicker === 'callStart' || this.activeDatePicker === 'modalCallStart') {
+      this.startDate = normalized;
+    }
+    if (this.activeDatePicker === 'callEnd' || this.activeDatePicker === 'modalCallEnd') {
+      this.endDate = normalized;
+    }
     this.closeDatePicker();
   }
 
@@ -764,6 +781,15 @@ export class ClientsComponent implements OnInit {
     }
     if (this.activeDatePicker === 'cheque') {
       return this.newChequeDate;
+    }
+    if (this.activeDatePicker === 'birthDay') {
+      return this.formData.birthDay;
+    }
+    if (this.activeDatePicker === 'callStart' || this.activeDatePicker === 'modalCallStart') {
+      return this.startDate;
+    }
+    if (this.activeDatePicker === 'callEnd' || this.activeDatePicker === 'modalCallEnd') {
+      return this.endDate;
     }
     return '';
   }

@@ -48,3 +48,74 @@ button:disabled {
 .error {
   color: #c52828;
 }
+
+.date-picker-field {
+  position: relative;
+}
+
+.jalali-datepicker {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  width: 100%;
+  min-width: 240px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
+  padding: 0.75rem;
+  z-index: 10;
+}
+
+.jalali-datepicker .calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+.jalali-datepicker .calendar-header button {
+  border: 1px solid #cbd5f5;
+  background: #f8fafc;
+  color: #334155;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.jalali-datepicker .calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.35rem;
+  text-align: center;
+}
+
+.jalali-datepicker .weekday {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.jalali-datepicker .empty {
+  height: 32px;
+}
+
+.jalali-datepicker .day {
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 8px;
+  padding: 0.35rem 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.jalali-datepicker .day.today {
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
+.jalali-datepicker .day.selected {
+  background: #3455ff;
+  color: #fff;
+}

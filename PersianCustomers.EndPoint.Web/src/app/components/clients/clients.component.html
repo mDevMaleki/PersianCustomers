@@ -85,7 +85,7 @@
             ایمیل
             <input type="email" name="email" [(ngModel)]="formData.email" />
           </label>
-          <label>
+          <label class="date-picker-field">
             تاریخ تولد
             <input
               type="text"
@@ -93,7 +93,38 @@
               placeholder="مثال: 1403/01/01"
               [(ngModel)]="formData.birthDay"
               (blur)="formData.birthDay = normalizeDateInput(formData.birthDay)"
+              (click)="openDatePicker('birthDay', formData.birthDay); $event.stopPropagation()"
+              (focus)="openDatePicker('birthDay', formData.birthDay)"
             />
+            <div
+              class="jalali-datepicker"
+              *ngIf="activeDatePicker === 'birthDay'"
+              (click)="$event.stopPropagation()"
+            >
+              <div class="calendar-header">
+                <button type="button" (click)="changeDatePickerMonth(-1)">
+                  &lt;
+                </button>
+                <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+                <button type="button" (click)="changeDatePickerMonth(1)">
+                  &gt;
+                </button>
+              </div>
+              <div class="calendar-grid">
+                <span class="weekday" *ngFor="let day of datePickerWeekdays">{{ day }}</span>
+                <span class="empty" *ngFor="let empty of datePickerLeadingDays"></span>
+                <button
+                  type="button"
+                  class="day"
+                  *ngFor="let day of datePickerDays"
+                  [class.selected]="isDatePickerSelected(day)"
+                  [class.today]="isDatePickerToday(day)"
+                  (click)="selectDatePickerDay(day)"
+                >
+                  {{ day }}
+                </button>
+              </div>
+            </div>
           </label>
           <label>
             نوع خدمات
@@ -162,23 +193,85 @@
       </div>
 
       <div class="filters">
-        <label>
+        <label class="date-picker-field">
           از تاریخ
           <input
             type="text"
             placeholder="مثال: 1403/01/01"
             [(ngModel)]="startDate"
             (blur)="startDate = normalizeDateInput(startDate)"
+            (click)="openDatePicker('modalCallStart', startDate); $event.stopPropagation()"
+            (focus)="openDatePicker('modalCallStart', startDate)"
           />
+          <div
+            class="jalali-datepicker"
+            *ngIf="activeDatePicker === 'modalCallStart'"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="calendar-header">
+              <button type="button" (click)="changeDatePickerMonth(-1)">
+                &lt;
+              </button>
+              <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+              <button type="button" (click)="changeDatePickerMonth(1)">
+                &gt;
+              </button>
+            </div>
+            <div class="calendar-grid">
+              <span class="weekday" *ngFor="let day of datePickerWeekdays">{{ day }}</span>
+              <span class="empty" *ngFor="let empty of datePickerLeadingDays"></span>
+              <button
+                type="button"
+                class="day"
+                *ngFor="let day of datePickerDays"
+                [class.selected]="isDatePickerSelected(day)"
+                [class.today]="isDatePickerToday(day)"
+                (click)="selectDatePickerDay(day)"
+              >
+                {{ day }}
+              </button>
+            </div>
+          </div>
         </label>
-        <label>
+        <label class="date-picker-field">
           تا تاریخ
           <input
             type="text"
             placeholder="مثال: 1403/01/01"
             [(ngModel)]="endDate"
             (blur)="endDate = normalizeDateInput(endDate)"
+            (click)="openDatePicker('modalCallEnd', endDate); $event.stopPropagation()"
+            (focus)="openDatePicker('modalCallEnd', endDate)"
           />
+          <div
+            class="jalali-datepicker"
+            *ngIf="activeDatePicker === 'modalCallEnd'"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="calendar-header">
+              <button type="button" (click)="changeDatePickerMonth(-1)">
+                &lt;
+              </button>
+              <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+              <button type="button" (click)="changeDatePickerMonth(1)">
+                &gt;
+              </button>
+            </div>
+            <div class="calendar-grid">
+              <span class="weekday" *ngFor="let day of datePickerWeekdays">{{ day }}</span>
+              <span class="empty" *ngFor="let empty of datePickerLeadingDays"></span>
+              <button
+                type="button"
+                class="day"
+                *ngFor="let day of datePickerDays"
+                [class.selected]="isDatePickerSelected(day)"
+                [class.today]="isDatePickerToday(day)"
+                (click)="selectDatePickerDay(day)"
+              >
+                {{ day }}
+              </button>
+            </div>
+          </div>
         </label>
         <button type="button" (click)="loadModalCallRecords()" [disabled]="modalIsLoadingCalls">
           {{ modalIsLoadingCalls ? 'در حال دریافت...' : 'نمایش تماس‌ها' }}
@@ -802,23 +895,85 @@
   </header>
 
   <div class="filters">
-      <label>
+      <label class="date-picker-field">
         از تاریخ
         <input
           type="text"
           placeholder="مثال: 1403/01/01"
           [(ngModel)]="startDate"
           (blur)="startDate = normalizeDateInput(startDate)"
+          (click)="openDatePicker('callStart', startDate); $event.stopPropagation()"
+          (focus)="openDatePicker('callStart', startDate)"
         />
+        <div
+          class="jalali-datepicker"
+          *ngIf="activeDatePicker === 'callStart'"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="calendar-header">
+            <button type="button" (click)="changeDatePickerMonth(-1)">
+              &lt;
+            </button>
+            <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+            <button type="button" (click)="changeDatePickerMonth(1)">
+              &gt;
+            </button>
+          </div>
+          <div class="calendar-grid">
+            <span class="weekday" *ngFor="let day of datePickerWeekdays">{{ day }}</span>
+            <span class="empty" *ngFor="let empty of datePickerLeadingDays"></span>
+            <button
+              type="button"
+              class="day"
+              *ngFor="let day of datePickerDays"
+              [class.selected]="isDatePickerSelected(day)"
+              [class.today]="isDatePickerToday(day)"
+              (click)="selectDatePickerDay(day)"
+            >
+              {{ day }}
+            </button>
+          </div>
+        </div>
       </label>
-      <label>
+      <label class="date-picker-field">
         تا تاریخ
         <input
           type="text"
           placeholder="مثال: 1403/01/01"
           [(ngModel)]="endDate"
           (blur)="endDate = normalizeDateInput(endDate)"
+          (click)="openDatePicker('callEnd', endDate); $event.stopPropagation()"
+          (focus)="openDatePicker('callEnd', endDate)"
         />
+        <div
+          class="jalali-datepicker"
+          *ngIf="activeDatePicker === 'callEnd'"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="calendar-header">
+            <button type="button" (click)="changeDatePickerMonth(-1)">
+              &lt;
+            </button>
+            <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+            <button type="button" (click)="changeDatePickerMonth(1)">
+              &gt;
+            </button>
+          </div>
+          <div class="calendar-grid">
+            <span class="weekday" *ngFor="let day of datePickerWeekdays">{{ day }}</span>
+            <span class="empty" *ngFor="let empty of datePickerLeadingDays"></span>
+            <button
+              type="button"
+              class="day"
+              *ngFor="let day of datePickerDays"
+              [class.selected]="isDatePickerSelected(day)"
+              [class.today]="isDatePickerToday(day)"
+              (click)="selectDatePickerDay(day)"
+            >
+              {{ day }}
+            </button>
+          </div>
+        </div>
       </label>
     <button (click)="loadCallRecords()" [disabled]="isLoadingCalls">
       {{ isLoadingCalls ? 'در حال دریافت...' : 'نمایش تماس‌ها' }}
