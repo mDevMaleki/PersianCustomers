@@ -221,6 +221,7 @@ export class ClientsComponent implements OnInit {
     'بهمن',
     'اسفند'
   ];
+  readonly datePickerYears = Array.from({ length: 201 }, (_, index) => 1300 + index);
 
   readonly datePickerWeekdays = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'];
 
@@ -728,6 +729,16 @@ export class ClientsComponent implements OnInit {
     }
     this.datePickerMonth = nextMonth;
     this.datePickerYear = nextYear;
+    this.updateDatePickerGrid();
+  }
+
+  onDatePickerMonthChange(value: string | number) {
+    this.datePickerMonth = Number(value);
+    this.updateDatePickerGrid();
+  }
+
+  onDatePickerYearChange(value: string | number) {
+    this.datePickerYear = Number(value);
     this.updateDatePickerGrid();
   }
 

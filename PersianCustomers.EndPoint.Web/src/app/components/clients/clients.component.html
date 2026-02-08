@@ -105,7 +105,30 @@
                 <button type="button" (click)="changeDatePickerMonth(-1)">
                   &lt;
                 </button>
-                <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+                <div class="calendar-selects">
+                  <select
+                    class="calendar-select"
+                    (click)="$event.stopPropagation()"
+                    (mousedown)="$event.stopPropagation()"
+                    [value]="datePickerMonth"
+                    (change)="onDatePickerMonthChange($event.target.value)"
+                  >
+                    <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
+                      {{ month }}
+                    </option>
+                  </select>
+                  <select
+                    class="calendar-select"
+                    (click)="$event.stopPropagation()"
+                    (mousedown)="$event.stopPropagation()"
+                    [value]="datePickerYear"
+                    (change)="onDatePickerYearChange($event.target.value)"
+                  >
+                    <option *ngFor="let year of datePickerYears" [value]="year">
+                      {{ year }}
+                    </option>
+                  </select>
+                </div>
                 <button type="button" (click)="changeDatePickerMonth(1)">
                   &gt;
                 </button>
@@ -212,7 +235,30 @@
               <button type="button" (click)="changeDatePickerMonth(-1)">
                 &lt;
               </button>
-              <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+              <div class="calendar-selects">
+                <select
+                  class="calendar-select"
+                  (click)="$event.stopPropagation()"
+                  (mousedown)="$event.stopPropagation()"
+                  [value]="datePickerMonth"
+                  (change)="onDatePickerMonthChange($event.target.value)"
+                >
+                  <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
+                    {{ month }}
+                  </option>
+                </select>
+                <select
+                  class="calendar-select"
+                  (click)="$event.stopPropagation()"
+                  (mousedown)="$event.stopPropagation()"
+                  [value]="datePickerYear"
+                  (change)="onDatePickerYearChange($event.target.value)"
+                >
+                  <option *ngFor="let year of datePickerYears" [value]="year">
+                    {{ year }}
+                  </option>
+                </select>
+              </div>
               <button type="button" (click)="changeDatePickerMonth(1)">
                 &gt;
               </button>
@@ -252,7 +298,30 @@
               <button type="button" (click)="changeDatePickerMonth(-1)">
                 &lt;
               </button>
-              <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+              <div class="calendar-selects">
+                <select
+                  class="calendar-select"
+                  (click)="$event.stopPropagation()"
+                  (mousedown)="$event.stopPropagation()"
+                  [value]="datePickerMonth"
+                  (change)="onDatePickerMonthChange($event.target.value)"
+                >
+                  <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
+                    {{ month }}
+                  </option>
+                </select>
+                <select
+                  class="calendar-select"
+                  (click)="$event.stopPropagation()"
+                  (mousedown)="$event.stopPropagation()"
+                  [value]="datePickerYear"
+                  (change)="onDatePickerYearChange($event.target.value)"
+                >
+                  <option *ngFor="let year of datePickerYears" [value]="year">
+                    {{ year }}
+                  </option>
+                </select>
+              </div>
               <button type="button" (click)="changeDatePickerMonth(1)">
                 &gt;
               </button>
@@ -350,7 +419,30 @@
               <button type="button" (click)="changeDatePickerMonth(-1)">
                 ‹
               </button>
-              <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+              <div class="calendar-selects">
+                <select
+                  class="calendar-select"
+                  (click)="$event.stopPropagation()"
+                  (mousedown)="$event.stopPropagation()"
+                  [value]="datePickerMonth"
+                  (change)="onDatePickerMonthChange($event.target.value)"
+                >
+                  <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
+                    { month }
+                  </option>
+                </select>
+                <select
+                  class="calendar-select"
+                  (click)="$event.stopPropagation()"
+                  (mousedown)="$event.stopPropagation()"
+                  [value]="datePickerYear"
+                  (change)="onDatePickerYearChange($event.target.value)"
+                >
+                  <option *ngFor="let year of datePickerYears" [value]="year">
+                    { year }
+                  </option>
+                </select>
+              </div>
               <button type="button" (click)="changeDatePickerMonth(1)">
                 ›
               </button>
@@ -469,7 +561,30 @@
               <button type="button" (click)="changeDatePickerMonth(-1)">
                 ‹
               </button>
-              <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+              <div class="calendar-selects">
+                <select
+                  class="calendar-select"
+                  (click)="$event.stopPropagation()"
+                  (mousedown)="$event.stopPropagation()"
+                  [value]="datePickerMonth"
+                  (change)="onDatePickerMonthChange($event.target.value)"
+                >
+                  <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
+                    { month }
+                  </option>
+                </select>
+                <select
+                  class="calendar-select"
+                  (click)="$event.stopPropagation()"
+                  (mousedown)="$event.stopPropagation()"
+                  [value]="datePickerYear"
+                  (change)="onDatePickerYearChange($event.target.value)"
+                >
+                  <option *ngFor="let year of datePickerYears" [value]="year">
+                    { year }
+                  </option>
+                </select>
+              </div>
               <button type="button" (click)="changeDatePickerMonth(1)">
                 ›
               </button>
@@ -725,7 +840,30 @@
                       <button type="button" (click)="changeDatePickerMonth(-1)">
                         ‹
                       </button>
-                      <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+                      <div class="calendar-selects">
+                  <select
+                    class="calendar-select"
+                    (click)="$event.stopPropagation()"
+                    (mousedown)="$event.stopPropagation()"
+                    [value]="datePickerMonth"
+                    (change)="onDatePickerMonthChange($event.target.value)"
+                  >
+                    <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
+                      {{ month }}
+                    </option>
+                  </select>
+                  <select
+                    class="calendar-select"
+                    (click)="$event.stopPropagation()"
+                    (mousedown)="$event.stopPropagation()"
+                    [value]="datePickerYear"
+                    (change)="onDatePickerYearChange($event.target.value)"
+                  >
+                    <option *ngFor="let year of datePickerYears" [value]="year">
+                      {{ year }}
+                    </option>
+                  </select>
+                </div>
                       <button type="button" (click)="changeDatePickerMonth(1)">
                         ›
                       </button>
@@ -914,7 +1052,30 @@
             <button type="button" (click)="changeDatePickerMonth(-1)">
               &lt;
             </button>
-            <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+            <div class="calendar-selects">
+              <select
+                class="calendar-select"
+                (click)="$event.stopPropagation()"
+                (mousedown)="$event.stopPropagation()"
+                [value]="datePickerMonth"
+                (change)="onDatePickerMonthChange($event.target.value)"
+              >
+                <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
+                  { month }
+                </option>
+              </select>
+              <select
+                class="calendar-select"
+                (click)="$event.stopPropagation()"
+                (mousedown)="$event.stopPropagation()"
+                [value]="datePickerYear"
+                (change)="onDatePickerYearChange($event.target.value)"
+              >
+                <option *ngFor="let year of datePickerYears" [value]="year">
+                  { year }
+                </option>
+              </select>
+            </div>
             <button type="button" (click)="changeDatePickerMonth(1)">
               &gt;
             </button>
@@ -954,7 +1115,30 @@
             <button type="button" (click)="changeDatePickerMonth(-1)">
               &lt;
             </button>
-            <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+            <div class="calendar-selects">
+              <select
+                class="calendar-select"
+                (click)="$event.stopPropagation()"
+                (mousedown)="$event.stopPropagation()"
+                [value]="datePickerMonth"
+                (change)="onDatePickerMonthChange($event.target.value)"
+              >
+                <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
+                  { month }
+                </option>
+              </select>
+              <select
+                class="calendar-select"
+                (click)="$event.stopPropagation()"
+                (mousedown)="$event.stopPropagation()"
+                [value]="datePickerYear"
+                (change)="onDatePickerYearChange($event.target.value)"
+              >
+                <option *ngFor="let year of datePickerYears" [value]="year">
+                  { year }
+                </option>
+              </select>
+            </div>
             <button type="button" (click)="changeDatePickerMonth(1)">
               &gt;
             </button>
