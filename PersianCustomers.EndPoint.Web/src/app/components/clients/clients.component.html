@@ -237,7 +237,7 @@
       </div>
 
       <div class="task-form">
-        <label>
+        <label class="date-picker-field">
           تاریخ
           <input
             type="text"
@@ -245,7 +245,38 @@
             placeholder="مثال: 1403/01/01"
             [(ngModel)]="taskForm.date"
             (blur)="taskForm.date = normalizeDateInput(taskForm.date)"
+            (click)="openDatePicker('task', taskForm.date); $event.stopPropagation()"
+            (focus)="openDatePicker('task', taskForm.date)"
           />
+          <div
+            class="jalali-datepicker"
+            *ngIf="activeDatePicker === 'task'"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="calendar-header">
+              <button type="button" (click)="changeDatePickerMonth(-1)">
+                ‹
+              </button>
+              <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+              <button type="button" (click)="changeDatePickerMonth(1)">
+                ›
+              </button>
+            </div>
+            <div class="calendar-grid">
+              <span class="weekday" *ngFor="let day of datePickerWeekdays">{{ day }}</span>
+              <span class="empty" *ngFor="let empty of datePickerLeadingDays"></span>
+              <button
+                type="button"
+                class="day"
+                *ngFor="let day of datePickerDays"
+                [class.selected]="isDatePickerSelected(day)"
+                [class.today]="isDatePickerToday(day)"
+                (click)="selectDatePickerDay(day)"
+              >
+                {{ day }}
+              </button>
+            </div>
+          </div>
         </label>
         <label>
           ساعت
@@ -325,7 +356,7 @@
       </div>
 
       <div class="appointment-form">
-        <label>
+        <label class="date-picker-field">
           تاریخ
           <input
             type="text"
@@ -333,7 +364,38 @@
             placeholder="مثال: 1403/01/01"
             [(ngModel)]="appointmentForm.date"
             (blur)="appointmentForm.date = normalizeDateInput(appointmentForm.date)"
+            (click)="openDatePicker('appointment', appointmentForm.date); $event.stopPropagation()"
+            (focus)="openDatePicker('appointment', appointmentForm.date)"
           />
+          <div
+            class="jalali-datepicker"
+            *ngIf="activeDatePicker === 'appointment'"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="calendar-header">
+              <button type="button" (click)="changeDatePickerMonth(-1)">
+                ‹
+              </button>
+              <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+              <button type="button" (click)="changeDatePickerMonth(1)">
+                ›
+              </button>
+            </div>
+            <div class="calendar-grid">
+              <span class="weekday" *ngFor="let day of datePickerWeekdays">{{ day }}</span>
+              <span class="empty" *ngFor="let empty of datePickerLeadingDays"></span>
+              <button
+                type="button"
+                class="day"
+                *ngFor="let day of datePickerDays"
+                [class.selected]="isDatePickerSelected(day)"
+                [class.today]="isDatePickerToday(day)"
+                (click)="selectDatePickerDay(day)"
+              >
+                {{ day }}
+              </button>
+            </div>
+          </div>
         </label>
         <label>
           ساعت
@@ -551,14 +613,45 @@
             <div class="treatment-checks">
               <h5>ثبت چک‌ها</h5>
               <div class="check-grid check-form">
-                <label>
+                <label class="date-picker-field">
                   تاریخ چک
                   <input
                     type="text"
                     placeholder="مثال: 1403/01/01"
                     [(ngModel)]="newChequeDate"
                     (blur)="newChequeDate = normalizeDateInput(newChequeDate)"
+                    (click)="openDatePicker('cheque', newChequeDate); $event.stopPropagation()"
+                    (focus)="openDatePicker('cheque', newChequeDate)"
                   />
+                  <div
+                    class="jalali-datepicker"
+                    *ngIf="activeDatePicker === 'cheque'"
+                    (click)="$event.stopPropagation()"
+                  >
+                    <div class="calendar-header">
+                      <button type="button" (click)="changeDatePickerMonth(-1)">
+                        ‹
+                      </button>
+                      <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+                      <button type="button" (click)="changeDatePickerMonth(1)">
+                        ›
+                      </button>
+                    </div>
+                    <div class="calendar-grid">
+                      <span class="weekday" *ngFor="let day of datePickerWeekdays">{{ day }}</span>
+                      <span class="empty" *ngFor="let empty of datePickerLeadingDays"></span>
+                      <button
+                        type="button"
+                        class="day"
+                        *ngFor="let day of datePickerDays"
+                        [class.selected]="isDatePickerSelected(day)"
+                        [class.today]="isDatePickerToday(day)"
+                        (click)="selectDatePickerDay(day)"
+                      >
+                        {{ day }}
+                      </button>
+                    </div>
+                  </div>
                 </label>
                 <label>
                   مبلغ چک
