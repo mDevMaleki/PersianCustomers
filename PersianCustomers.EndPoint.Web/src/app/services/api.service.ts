@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import {
   AuthResponse,
   BaseResponse,
+  CampaignDto,
   CallRecordDto,
   ClientDto,
   LoginRequest,
@@ -55,5 +56,25 @@ export class ApiService {
 
   deleteClient(id: number) {
     return this.http.delete<BaseResponse<boolean>>(`${this.baseUrl}/Client/${id}`);
+  }
+
+  getCampaigns(pageNumber = 1, pageSize = 10) {
+    const params = new HttpParams()
+      .set('pageNumber', pageNumber)
+      .set('pageSize', pageSize);
+
+    return this.http.get<BaseResponse<PaginatedResult<CampaignDto>>>(`${this.baseUrl}/Campaign`, { params });
+  }
+
+  createCampaign(request: CampaignDto) {
+    return this.http.post<BaseResponse<number>>(`${this.baseUrl}/Campaign`, request);
+  }
+
+  updateCampaign(request: CampaignDto) {
+    return this.http.put<BaseResponse<boolean>>(`${this.baseUrl}/Campaign`, request);
+  }
+
+  deleteCampaign(id: number) {
+    return this.http.delete<BaseResponse<boolean>>(`${this.baseUrl}/Campaign/${id}`);
   }
 }
