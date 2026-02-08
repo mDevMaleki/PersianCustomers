@@ -1,15 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { BaseResponse, CallRecordDto, ClientDto, PaginatedResult } from '../../models/api.models';
 import {
   formatJalaliDateTime,
+  getJalaliMonthLength,
   normalizeJalaliInput,
   normalizeTimeInput,
+  parseJalaliDate,
+  toGregorianDate,
   toGregorianDateString,
   toJalaliDateString
 } from '../../utils/jalali-date';
 
 type ToothArch = 'upper' | 'lower';
+type DatePickerTarget = 'task' | 'appointment' | 'cheque';
 
 export interface ToothClickPayload {
   id: string;
@@ -189,6 +193,29 @@ export class ClientsComponent implements OnInit {
   startDate = toJalaliDateString(this.addDays(new Date(), -7));
   endDate = toJalaliDateString(new Date());
 
+  activeDatePicker: DatePickerTarget | null = null;
+  datePickerYear = 0;
+  datePickerMonth = 0;
+  datePickerLeadingDays: number[] = [];
+  datePickerDays: number[] = [];
+
+  readonly datePickerMonths = [
+    'فروردین',
+    'اردیبهشت',
+    'خرداد',
+    'تیر',
+    'مرداد',
+    'شهریور',
+    'مهر',
+    'آبان',
+    'آذر',
+    'دی',
+    'بهمن',
+    'اسفند'
+  ];
+
+  readonly datePickerWeekdays = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'];
+
   formData: ClientDto = this.getEmptyForm();
 
   dentalServiceOptions = [
@@ -211,6 +238,11 @@ export class ClientsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadClients();
+  }
+
+  @HostListener('document:click')
+  closeDatePicker() {
+    this.activeDatePicker = null;
   }
 
 
@@ -661,6 +693,87 @@ export class ClientsComponent implements OnInit {
 
   normalizeTimeInput(value?: string | null) {
     return normalizeTimeInput(value);
+  }
+
+  openDatePicker(target: DatePickerTarget, currentValue?: string | null) {
+    const parsed = parseJalaliDate(currentValue ?? '');
+    const today = parseJalaliDate(toJalaliDateString(new Date()));
+    const fallbackYear = today?.jy ?? 1400;
+    const fallbackMonth = today?.jm ?? 1;
+
+    this.datePickerYear = parsed?.jy ?? fallbackYear;
+    this.datePickerMonth = parsed?.jm ?? fallbackMonth;
+    this.activeDatePicker = target;
+    this.updateDatePickerGrid();
+  }
+
+  changeDatePickerMonth(step: number) {
+    let nextMonth = this.datePickerMonth + step;
+    let nextYear = this.datePickerYear;
+    if (nextMonth < 1) {
+      nextMonth = 12;
+      nextYear -= 1;
+    }
+    if (nextMonth > 12) {
+      nextMonth = 1;
+      nextYear += 1;
+    }
+    this.datePickerMonth = nextMonth;
+    this.datePickerYear = nextYear;
+    this.updateDatePickerGrid();
+  }
+
+  selectDatePickerDay(day: number) {
+    if (!this.activeDatePicker) {
+      return;
+    }
+    const normalized = this.normalizeDateInput(`${this.datePickerYear}/${this.datePickerMonth}/${day}`);
+    if (this.activeDatePicker === 'task') {
+      this.taskForm.date = normalized;
+    }
+    if (this.activeDatePicker === 'appointment') {
+      this.appointmentForm.date = normalized;
+    }
+    if (this.activeDatePicker === 'cheque') {
+      this.newChequeDate = normalized;
+    }
+    this.closeDatePicker();
+  }
+
+  isDatePickerSelected(day: number) {
+    const value = this.getDatePickerValue();
+    const parsed = parseJalaliDate(value);
+    return parsed?.jy === this.datePickerYear
+      && parsed?.jm === this.datePickerMonth
+      && parsed?.jd === day;
+  }
+
+  isDatePickerToday(day: number) {
+    const today = parseJalaliDate(toJalaliDateString(new Date()));
+    return today?.jy === this.datePickerYear
+      && today?.jm === this.datePickerMonth
+      && today?.jd === day;
+  }
+
+  private getDatePickerValue() {
+    if (this.activeDatePicker === 'task') {
+      return this.taskForm.date;
+    }
+    if (this.activeDatePicker === 'appointment') {
+      return this.appointmentForm.date;
+    }
+    if (this.activeDatePicker === 'cheque') {
+      return this.newChequeDate;
+    }
+    return '';
+  }
+
+  private updateDatePickerGrid() {
+    const monthLength = getJalaliMonthLength(this.datePickerYear, this.datePickerMonth);
+    const firstDay = toGregorianDate(this.datePickerYear, this.datePickerMonth, 1);
+    const startOffset = (firstDay.getDay() + 1) % 7;
+    this.datePickerLeadingDays = Array.from({ length: startOffset }, (_, index) => index);
+    this.datePickerDays = Array.from({ length: monthLength }, (_, index) => index + 1);
   }
 
   formatPrice(value: number) {

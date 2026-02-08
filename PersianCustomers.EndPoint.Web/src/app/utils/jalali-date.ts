@@ -205,6 +205,23 @@ export const normalizeTimeInput = (value?: string | null) => {
   return trimmed;
 };
 
+export const isJalaliLeapYear = (jy: number) => jalCal(jy).leap === 0;
+
+export const getJalaliMonthLength = (jy: number, jm: number) => {
+  if (jm <= 6) {
+    return 31;
+  }
+  if (jm <= 11) {
+    return 30;
+  }
+  return isJalaliLeapYear(jy) ? 30 : 29;
+};
+
+export const toGregorianDate = (jy: number, jm: number, jd: number) => {
+  const { gy, gm, gd } = d2g(j2d(jy, jm, jd));
+  return new Date(gy, gm - 1, gd);
+};
+
 export const toGregorianDateString = (jalaliInput?: string | null) => {
   if (!jalaliInput) {
     return '';
