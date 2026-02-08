@@ -104,13 +104,87 @@
           URL کمپین
           <input type="url" name="url" [(ngModel)]="formData.url" required />
         </label>
-        <label>
+        <label class="date-picker-field">
           تاریخ شروع
-          <input type="text" name="startDate" placeholder="مثال: 1403/01/01" [(ngModel)]="formData.startDate" />
+          <input
+            type="text"
+            name="startDate"
+            placeholder="مثال: 1403/01/01"
+            [(ngModel)]="formData.startDate"
+            (blur)="formData.startDate = normalizeDateInput(formData.startDate)"
+            (click)="openDatePicker('startDate', formData.startDate); $event.stopPropagation()"
+            (focus)="openDatePicker('startDate', formData.startDate)"
+          />
+          <div
+            class="jalali-datepicker"
+            *ngIf="activeDatePicker === 'startDate'"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="calendar-header">
+              <button type="button" (click)="changeDatePickerMonth(-1)">
+                &lt;
+              </button>
+              <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+              <button type="button" (click)="changeDatePickerMonth(1)">
+                &gt;
+              </button>
+            </div>
+            <div class="calendar-grid">
+              <span class="weekday" *ngFor="let day of datePickerWeekdays">{{ day }}</span>
+              <span class="empty" *ngFor="let empty of datePickerLeadingDays"></span>
+              <button
+                type="button"
+                class="day"
+                *ngFor="let day of datePickerDays"
+                [class.selected]="isDatePickerSelected(day)"
+                [class.today]="isDatePickerToday(day)"
+                (click)="selectDatePickerDay(day)"
+              >
+                {{ day }}
+              </button>
+            </div>
+          </div>
         </label>
-        <label>
+        <label class="date-picker-field">
           تاریخ پایان
-          <input type="text" name="endDate" placeholder="مثال: 1403/02/01" [(ngModel)]="formData.endDate" />
+          <input
+            type="text"
+            name="endDate"
+            placeholder="مثال: 1403/02/01"
+            [(ngModel)]="formData.endDate"
+            (blur)="formData.endDate = normalizeDateInput(formData.endDate)"
+            (click)="openDatePicker('endDate', formData.endDate); $event.stopPropagation()"
+            (focus)="openDatePicker('endDate', formData.endDate)"
+          />
+          <div
+            class="jalali-datepicker"
+            *ngIf="activeDatePicker === 'endDate'"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="calendar-header">
+              <button type="button" (click)="changeDatePickerMonth(-1)">
+                &lt;
+              </button>
+              <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+              <button type="button" (click)="changeDatePickerMonth(1)">
+                &gt;
+              </button>
+            </div>
+            <div class="calendar-grid">
+              <span class="weekday" *ngFor="let day of datePickerWeekdays">{{ day }}</span>
+              <span class="empty" *ngFor="let empty of datePickerLeadingDays"></span>
+              <button
+                type="button"
+                class="day"
+                *ngFor="let day of datePickerDays"
+                [class.selected]="isDatePickerSelected(day)"
+                [class.today]="isDatePickerToday(day)"
+                (click)="selectDatePickerDay(day)"
+              >
+                {{ day }}
+              </button>
+            </div>
+          </div>
         </label>
         <label>
           بودجه (تومان)

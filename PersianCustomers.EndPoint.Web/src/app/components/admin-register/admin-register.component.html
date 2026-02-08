@@ -45,7 +45,7 @@
         <input type="text" name="nationalCode" [(ngModel)]="model.nationalCode" />
       </label>
 
-      <label>
+      <label class="date-picker-field">
         تاریخ تولد
         <input
           type="text"
@@ -53,7 +53,34 @@
           placeholder="مثال: 1403/01/01"
           [(ngModel)]="birthDateInput"
           (blur)="normalizeBirthDateInput()"
+          (click)="openDatePicker(); $event.stopPropagation()"
+          (focus)="openDatePicker()"
         />
+        <div class="jalali-datepicker" *ngIf="activeDatePicker" (click)="$event.stopPropagation()">
+          <div class="calendar-header">
+            <button type="button" (click)="changeDatePickerMonth(-1)">
+              &lt;
+            </button>
+            <span>{{ datePickerMonths[datePickerMonth - 1] }} {{ datePickerYear }}</span>
+            <button type="button" (click)="changeDatePickerMonth(1)">
+              &gt;
+            </button>
+          </div>
+          <div class="calendar-grid">
+            <span class="weekday" *ngFor="let day of datePickerWeekdays">{{ day }}</span>
+            <span class="empty" *ngFor="let empty of datePickerLeadingDays"></span>
+            <button
+              type="button"
+              class="day"
+              *ngFor="let day of datePickerDays"
+              [class.selected]="isDatePickerSelected(day)"
+              [class.today]="isDatePickerToday(day)"
+              (click)="selectDatePickerDay(day)"
+            >
+              {{ day }}
+            </button>
+          </div>
+        </div>
       </label>
 
       <label class="full">
