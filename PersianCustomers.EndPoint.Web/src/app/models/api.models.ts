@@ -79,6 +79,19 @@ export interface CallRecordDto {
   sequence: number;
 }
 
+export interface CampaignDto {
+  id?: number;
+  name: string;
+  type: string;
+  placement: string;
+  url: string;
+  startDate?: string;
+  endDate?: string;
+  budget?: number;
+  status?: string;
+  description?: string;
+}
+
 export interface LoginRequest {
   email: string;
   password: string;

@@ -8,10 +8,11 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { AdminRegisterComponent } from './components/admin-register/admin-register.component';
 import { ClientsComponent } from './components/clients/clients.component';
+import { CampaignsComponent } from './components/campaigns/campaigns.component';
 import { AuthInterceptor } from './services/auth.interceptor';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, AdminRegisterComponent, ClientsComponent],
+  declarations: [AppComponent, LoginComponent, AdminRegisterComponent, ClientsComponent, CampaignsComponent],
   imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule],
   providers: [
     {

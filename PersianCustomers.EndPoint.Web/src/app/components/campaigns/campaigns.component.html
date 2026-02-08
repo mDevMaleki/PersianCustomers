@@ -1,0 +1,143 @@
+<section class="card form-card">
+  <header class="section-header">
+    <div>
+      <h2>مدیریت کمپین‌ها</h2>
+      <p class="muted">لیست کمپین‌های تبلیغاتی، ثبت کمپین جدید و ویرایش یا حذف کمپین‌های موجود.</p>
+    </div>
+    <button class="outline" type="button" (click)="startCreateCampaign()" [disabled]="isSubmitting">
+      افزودن کمپین جدید
+    </button>
+  </header>
+
+  <p class="success" *ngIf="formSuccessMessage">{{ formSuccessMessage }}</p>
+</section>
+
+<section class="card">
+  <header class="section-header">
+    <div>
+      <h3>لیست کمپین‌ها</h3>
+      <p class="muted">اطلاعات پایه کمپین‌های ثبت شده را مشاهده کنید.</p>
+    </div>
+  </header>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p class="muted" *ngIf="!isLoading && !campaigns.length">کمپینی برای نمایش وجود ندارد.</p>
+  <p class="muted" *ngIf="isLoading">در حال دریافت اطلاعات کمپین‌ها...</p>
+
+  <div class="table-wrapper" *ngIf="campaigns.length">
+    <table class="campaigns-table">
+      <thead>
+        <tr>
+          <th>نام کمپین</th>
+          <th>نوع کمپین</th>
+          <th>محل تبلیغ</th>
+          <th>URL</th>
+          <th>بازه اجرا</th>
+          <th>بودجه</th>
+          <th>وضعیت</th>
+          <th>عملیات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let campaign of campaigns">
+          <td>{{ campaign.name }}</td>
+          <td>{{ getTypeLabel(campaign.type) }}</td>
+          <td>{{ campaign.placement }}</td>
+          <td>
+            <a [href]="campaign.url" target="_blank" rel="noopener">
+              {{ campaign.url }}
+            </a>
+          </td>
+          <td>
+            {{ campaign.startDate || '---' }} تا {{ campaign.endDate || '---' }}
+          </td>
+          <td>{{ campaign.budget ? (campaign.budget | number) : '---' }}</td>
+          <td>{{ getStatusLabel(campaign.status) }}</td>
+          <td>
+            <div class="table-actions">
+              <button type="button" (click)="startEditCampaign(campaign)">ویرایش</button>
+              <button type="button" class="danger" (click)="deleteCampaign(campaign)" [disabled]="isSubmitting">
+                حذف
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="modal-backdrop" *ngIf="isFormModalOpen" (click)="closeFormModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <div>
+        <h3>{{ isEditMode ? 'ویرایش کمپین' : 'ثبت کمپین جدید' }}</h3>
+        <p class="muted">اطلاعات کمپین را تکمیل کنید.</p>
+      </div>
+      <button type="button" class="close-button" (click)="closeFormModal()" [disabled]="isSubmitting">
+        بستن
+      </button>
+    </header>
+
+    <p class="error" *ngIf="formErrorMessage">{{ formErrorMessage }}</p>
+
+    <form class="campaign-form" (ngSubmit)="submitCampaign()">
+      <div class="form-grid">
+        <label>
+          نام کمپین
+          <input type="text" name="name" [(ngModel)]="formData.name" required />
+        </label>
+        <label>
+          نوع کمپین
+          <select name="type" [(ngModel)]="formData.type" required>
+            <option value="" disabled>انتخاب کنید</option>
+            <option *ngFor="let option of campaignTypeOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </label>
+        <label>
+          محل تبلیغ
+          <input type="text" name="placement" [(ngModel)]="formData.placement" required />
+        </label>
+        <label>
+          URL کمپین
+          <input type="url" name="url" [(ngModel)]="formData.url" required />
+        </label>
+        <label>
+          تاریخ شروع
+          <input type="text" name="startDate" placeholder="مثال: 1403/01/01" [(ngModel)]="formData.startDate" />
+        </label>
+        <label>
+          تاریخ پایان
+          <input type="text" name="endDate" placeholder="مثال: 1403/02/01" [(ngModel)]="formData.endDate" />
+        </label>
+        <label>
+          بودجه (تومان)
+          <input type="number" name="budget" [(ngModel)]="formData.budget" />
+        </label>
+        <label>
+          وضعیت
+          <select name="status" [(ngModel)]="formData.status">
+            <option *ngFor="let option of statusOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </label>
+        <label class="full">
+          توضیحات
+          <textarea name="description" rows="3" [(ngModel)]="formData.description"></textarea>
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="isSubmitting">
+          {{ isEditMode ? 'ذخیره تغییرات' : 'ثبت کمپین' }}
+        </button>
+        <button type="button" class="outline" (click)="startCreateCampaign()" [disabled]="isSubmitting">
+          پاک کردن فرم
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
