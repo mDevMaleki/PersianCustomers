@@ -13,6 +13,7 @@ namespace PersianCustomers.Core.Application.Common.Interfaces
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
         Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default);
 
+        IGenericRepository<Campaign> Campaigns { get; }
         IGenericRepository<Client> Clients { get; }
 
         Task BeginTransactionAsync();

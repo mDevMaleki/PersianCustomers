@@ -18,6 +18,7 @@ public class UnitOfWork : IUnitOfWork
     private bool _disposed;
 
     // Lazy initialization of repositories
+    private IGenericRepository<Campaign>? _campaigns;
     private IGenericRepository<Client>? _clients;
    
 
@@ -47,8 +48,11 @@ public class UnitOfWork : IUnitOfWork
         return repository ?? throw new InvalidOperationException($"Repository for {type.Name} could not be created.");
     }
 
+    public IGenericRepository<Campaign> Campaigns =>
+        _campaigns ??= new GenericRepositoryAdvanced<Campaign>(_context, _userContext);
+
     public IGenericRepository<Client> Clients =>
-_clients ??= new GenericRepositoryAdvanced<Client>(_context,_userContext);
+        _clients ??= new GenericRepositoryAdvanced<Client>(_context, _userContext);
 
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

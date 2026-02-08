@@ -11,6 +11,7 @@ namespace PersianCustomers.Infra.Persistence.Context
         {
         }
 
+        public DbSet<Campaign> Campaigns { get; set; }
         public DbSet<Client> Clients { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
