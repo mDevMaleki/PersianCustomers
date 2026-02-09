@@ -704,8 +704,21 @@ export class ClientsComponent implements OnInit {
     return normalizeTimeInput(value);
   }
 
+  private resolveDatePickerSeed(value?: string | null) {
+    const normalized = this.normalizeStoredDate(value ?? '');
+    const parsed = parseJalaliDate(normalized);
+    if (parsed) {
+      return parsed;
+    }
+    if (!value) {
+      return null;
+    }
+    const converted = toJalaliDateString(value);
+    return parseJalaliDate(converted);
+  }
+
   openDatePicker(target: DatePickerTarget, currentValue?: string | null) {
-    const parsed = parseJalaliDate(currentValue ?? '');
+    const parsed = this.resolveDatePickerSeed(currentValue ?? '');
     const today = parseJalaliDate(toJalaliDateString(new Date()));
     const fallbackYear = today?.jy ?? 1400;
     const fallbackMonth = today?.jm ?? 1;
