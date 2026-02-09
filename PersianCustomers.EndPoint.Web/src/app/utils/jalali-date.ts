@@ -80,6 +80,23 @@ const jalCal = (jy: number) => {
   return { leap, gy, march };
 };
 
+const isValidJalaliYear = (jy: number) => {
+  const minYear = JALALI_BREAKS[0];
+  const maxYear = JALALI_BREAKS[JALALI_BREAKS.length - 1];
+  return jy >= minYear && jy < maxYear;
+};
+
+const isValidJalaliDate = (jy: number, jm: number, jd: number) => {
+  if (!isValidJalaliYear(jy)) {
+    return false;
+  }
+  if (jm < 1 || jm > 12 || jd < 1) {
+    return false;
+  }
+  const monthLength = jm <= 6 ? 31 : jm <= 11 ? 30 : (jalCal(jy).leap === 0 ? 30 : 29);
+  return jd <= monthLength;
+};
+
 const g2d = (gy: number, gm: number, gd: number) => {
   const d = div((gy + 100100) * 1461, 4);
   const e = div(153 * mod(gm + 9, 12) + 2, 5);
@@ -174,6 +191,9 @@ export const parseJalaliDate = (value?: string | null): JalaliDateParts | null =
   }
   const [year, month, day] = parts.map((item) => Number(item));
   if (!year || !month || !day) {
+    return null;
+  }
+  if (!isValidJalaliDate(year, month, day)) {
     return null;
   }
   return { jy: year, jm: month, jd: day };
