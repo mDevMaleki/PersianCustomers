@@ -109,7 +109,7 @@
                   <select
                     class="calendar-select"
                     [value]="datePickerMonth"
-                    (change)="onDatePickerMonthChange($event.target.value)"
+                    (change)="onDatePickerMonthChange($any($event.target).value)"
                   >
                     <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
                       {{ month }}
@@ -118,7 +118,7 @@
                   <select
                     class="calendar-select"
                     [value]="datePickerYear"
-                    (change)="onDatePickerYearChange($event.target.value)"
+                    (change)="onDatePickerYearChange($any($event.target).value)"
                   >
                     <option *ngFor="let year of datePickerYears" [value]="year">
                       {{ year }}
@@ -235,7 +235,7 @@
                 <select
                   class="calendar-select"
                   [value]="datePickerMonth"
-                  (change)="onDatePickerMonthChange($event.target.value)"
+                  (change)="onDatePickerMonthChange($any($event.target).value)"
                 >
                   <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
                     {{ month }}
@@ -244,7 +244,7 @@
                 <select
                   class="calendar-select"
                   [value]="datePickerYear"
-                  (change)="onDatePickerYearChange($event.target.value)"
+                  (change)="onDatePickerYearChange($any($event.target).value)"
                 >
                   <option *ngFor="let year of datePickerYears" [value]="year">
                     {{ year }}
@@ -294,7 +294,7 @@
                 <select
                   class="calendar-select"
                   [value]="datePickerMonth"
-                  (change)="onDatePickerMonthChange($event.target.value)"
+                  (change)="onDatePickerMonthChange($any($event.target).value)"
                 >
                   <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
                     {{ month }}
@@ -303,7 +303,7 @@
                 <select
                   class="calendar-select"
                   [value]="datePickerYear"
-                  (change)="onDatePickerYearChange($event.target.value)"
+                  (change)="onDatePickerYearChange($any($event.target).value)"
                 >
                   <option *ngFor="let year of datePickerYears" [value]="year">
                     {{ year }}
@@ -411,19 +411,19 @@
                 <select
                   class="calendar-select"
                   [value]="datePickerMonth"
-                  (change)="onDatePickerMonthChange($event.target.value)"
+                  (change)="onDatePickerMonthChange($any($event.target).value)"
                 >
                   <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
-                    { month }
+                    {{ month }}
                   </option>
                 </select>
                 <select
                   class="calendar-select"
                   [value]="datePickerYear"
-                  (change)="onDatePickerYearChange($event.target.value)"
+                  (change)="onDatePickerYearChange($any($event.target).value)"
                 >
                   <option *ngFor="let year of datePickerYears" [value]="year">
-                    { year }
+                    {{ year }}
                   </option>
                 </select>
               </div>
@@ -549,19 +549,19 @@
                 <select
                   class="calendar-select"
                   [value]="datePickerMonth"
-                  (change)="onDatePickerMonthChange($event.target.value)"
+                  (change)="onDatePickerMonthChange($any($event.target).value)"
                 >
                   <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
-                    { month }
+                    {{ month }}
                   </option>
                 </select>
                 <select
                   class="calendar-select"
                   [value]="datePickerYear"
-                  (change)="onDatePickerYearChange($event.target.value)"
+                  (change)="onDatePickerYearChange($any($event.target).value)"
                 >
                   <option *ngFor="let year of datePickerYears" [value]="year">
-                    { year }
+                    {{ year }}
                   </option>
                 </select>
               </div>
@@ -824,7 +824,7 @@
                   <select
                     class="calendar-select"
                     [value]="datePickerMonth"
-                    (change)="onDatePickerMonthChange($event.target.value)"
+                    (change)="onDatePickerMonthChange($any($event.target).value)"
                   >
                     <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
                       {{ month }}
@@ -833,7 +833,7 @@
                   <select
                     class="calendar-select"
                     [value]="datePickerYear"
-                    (change)="onDatePickerYearChange($event.target.value)"
+                    (change)="onDatePickerYearChange($any($event.target).value)"
                   >
                     <option *ngFor="let year of datePickerYears" [value]="year">
                       {{ year }}
@@ -1032,19 +1032,19 @@
               <select
                 class="calendar-select"
                 [value]="datePickerMonth"
-                (change)="onDatePickerMonthChange($event.target.value)"
+                (change)="onDatePickerMonthChange($any($event.target).value)"
               >
                 <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
-                  { month }
+                  {{ month }}
                 </option>
               </select>
               <select
                 class="calendar-select"
                 [value]="datePickerYear"
-                (change)="onDatePickerYearChange($event.target.value)"
+                (change)="onDatePickerYearChange($any($event.target).value)"
               >
                 <option *ngFor="let year of datePickerYears" [value]="year">
-                  { year }
+                  {{ year }}
                 </option>
               </select>
             </div>
@@ -1091,19 +1091,19 @@
               <select
                 class="calendar-select"
                 [value]="datePickerMonth"
-                (change)="onDatePickerMonthChange($event.target.value)"
+                (change)="onDatePickerMonthChange($any($event.target).value)"
               >
                 <option *ngFor="let month of datePickerMonths; let idx = index" [value]="idx + 1">
-                  { month }
+                  {{ month }}
                 </option>
               </select>
               <select
                 class="calendar-select"
                 [value]="datePickerYear"
-                (change)="onDatePickerYearChange($event.target.value)"
+                (change)="onDatePickerYearChange($any($event.target).value)"
               >
                 <option *ngFor="let year of datePickerYears" [value]="year">
-                  { year }
+                  {{ year }}
                 </option>
               </select>
             </div>
