@@ -97,8 +97,21 @@ export class AdminRegisterComponent {
     this.birthDateInput = normalizeJalaliInput(this.birthDateInput);
   }
 
+  private resolveDatePickerSeed(value?: string | null) {
+    const normalized = normalizeJalaliInput(value);
+    const parsed = parseJalaliDate(normalized);
+    if (parsed) {
+      return parsed;
+    }
+    if (!value) {
+      return null;
+    }
+    const converted = toJalaliDateString(value);
+    return parseJalaliDate(converted);
+  }
+
   openDatePicker() {
-    const parsed = parseJalaliDate(this.birthDateInput);
+    const parsed = this.resolveDatePickerSeed(this.birthDateInput);
     const today = parseJalaliDate(toJalaliDateString(new Date()));
     const fallbackYear = today?.jy ?? 1400;
     const fallbackMonth = today?.jm ?? 1;
